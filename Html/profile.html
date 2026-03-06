@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>个人中心 - 校园论坛</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">校园论坛</div>
+    <div class="menu-toggle" id="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="menu" id="menu">
+      <a href="index.html">首页</a>
+      <a href="create.html">发帖</a>
+      <a href="discover.html">发现</a>
+      <a href="messages.html">消息</a>
+    </nav>
+    <div class="user" id="user-info">
+    </div>
+  </header>
+
+  <div class="container" style="max-width: 900px; margin: 0 auto; padding: 24px;">
+    <main class="main">
+      <div class="profile-header" id="profile-header">
+        <div class="profile-avatar" id="profile-avatar"></div>
+        <div class="profile-name" id="profile-name"></div>
+        <div class="profile-bio" id="profile-bio"></div>
+        <div class="user-card-stats" style="justify-content: center; margin-top: 16px;">
+          <div class="user-card-stat">
+            <div class="user-card-stat-value" id="post-count" style="color: #fff;">0</div>
+            <div class="user-card-stat-label" style="color: rgba(255,255,255,0.8);">帖子</div>
+          </div>
+          <div class="user-card-stat">
+            <div class="user-card-stat-value" id="favorite-count" style="color: #fff;">0</div>
+            <div class="user-card-stat-label" style="color: rgba(255,255,255,0.8);">收藏</div>
+          </div>
+          <div class="user-card-stat">
+            <div class="user-card-stat-value" id="like-count" style="color: #fff;">0</div>
+            <div class="user-card-stat-label" style="color: rgba(255,255,255,0.8);">获赞</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-tabs" id="profile-tabs">
+        <div class="profile-tab active" data-tab="posts">我的帖子</div>
+        <div class="profile-tab" data-tab="favorites">我的收藏</div>
+        <div class="profile-tab" data-tab="settings">个人设置</div>
+      </div>
+
+      <div class="card" style="border-radius: 0 0 8px 8px; margin-top: 0;">
+        <div id="tab-content">
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <p>&copy; 2026 重庆邮电大学 校园论坛</p>
+      <p style="font-size: 12px;">Web综合设计实践 | 联系我们: campus@cqupt.edu.cn</p>
+    </div>
+  </footer>
+
+  <script type="module" src="../JavaScript/profile.js"></script>
+</body>
+</html>

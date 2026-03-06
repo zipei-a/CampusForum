@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>注册 - 校园论坛</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">校园论坛</div>
+    <div class="menu-toggle" id="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="menu" id="menu">
+      <a href="index.html">首页</a>
+      <a href="create.html">发帖</a>
+      <a href="discover.html">发现</a>
+      <a href="messages.html">消息</a>
+    </nav>
+    <div class="user" id="user-info">
+      <!-- 登录状态会通过JS动态更新 -->
+    </div>
+  </header>
+
+  <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 24px;">
+    <main class="main" style="max-width: 800px; width: 100%; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+      <div style="flex: 1; background: linear-gradient(135deg, #409eff 0%, #66b1ff 50%, #79bbff 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; color: #fff;">
+        <div style="text-align: center;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="margin-bottom: 16px;">
+            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/>
+          </svg>
+          <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 12px;">加入校园论坛</h2>
+          <p style="font-size: 14px; opacity: 0.9; line-height: 1.6;">注册账号<br>成为校园社区的一员<br>和大家一起交流分享</p>
+        </div>
+      </div>
+      <div style="flex: 1; padding: 0;">
+        <form id="register-form" class="card" style="border: none; box-shadow: none; margin: 0; border-radius: 0; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <h2 style="text-align: center; margin-bottom: 24px;">用户注册</h2>
+        <div class="form-group">
+          <label for="username">用户名</label>
+          <input type="text" id="username" name="username" class="form-control" placeholder="请输入用户名" required />
+        </div>
+        <div class="form-group">
+          <label for="email">邮箱</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="请输入邮箱" required />
+        </div>
+        <div class="form-group">
+          <label for="password">密码</label>
+          <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码" required />
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">确认密码</label>
+          <input type="password" id="confirm-password" name="confirm-password" class="form-control" placeholder="请确认密码" required />
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #525e71;">
+            <input type="checkbox" id="agree" name="agree" style="margin: 0;" required />
+            我已阅读并同意<a href="#" style="color: #409eff;">服务条款</a>和<a href="#" style="color: #409eff;">隐私政策</a>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">注册</button>
+        <p style="margin-top: 16px; text-align: center; font-size: 14px; color: #525e71;">
+          已有账号？ <a href="login.html" style="color: #409eff;">立即登录</a>
+        </p>
+      </form>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <p>&copy; 2026 重庆邮电大学 校园论坛</p>
+      <p style="font-size: 12px;">Web综合设计实践 | 联系我们: campus@cqupt.edu.cn</p>
+    </div>
+  </footer>
+
+  <script type="module" src="../JavaScript/auth.js"></script>
+</body>
+</html>

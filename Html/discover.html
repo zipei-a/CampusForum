@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>发现 - 校园论坛</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">校园论坛</div>
+    <div class="menu-toggle" id="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="menu" id="menu">
+      <a href="index.html">首页</a>
+      <a href="create.html">发帖</a>
+      <a href="discover.html" class="active">发现</a>
+      <a href="messages.html">消息</a>
+    </nav>
+    <div class="user" id="user-info">
+    </div>
+    <div class="user-avatar" id="user-avatar" style="display: none;" title="个人中心"></div>
+  </header>
+
+  <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 24px;">
+    <main class="main">
+      <div class="card" style="margin-bottom: 24px;">
+        <h2>热门帖子</h2>
+        <div id="hot-posts" class="post-list">
+          <!-- JS 动态插入热门帖子 -->
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>活跃用户</h2>
+        <div id="recommended-users" style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px;">
+          <!-- JS 动态插入推荐用户 -->
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>校园风采</h2>
+        <div class="carousel-container" style="position: relative; width: 100%; height: 400px; overflow: hidden; border-radius: 8px; margin-top: 16px;">
+          <!-- 轮播图片容器 -->
+          <div class="carousel-slides" style="display: flex; transition: transform 0.5s ease-in-out; height: 100%;">
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p1.jpeg" alt="夜景" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">夜景</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p2.jpeg" alt="银杏" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">银杏</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p3.jpeg" alt="教学楼" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">教学楼</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p4.jpeg" alt="信科楼" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">信科楼</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p5.jpeg" alt="自然" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">自然</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p6.jpeg" alt="傍晚" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">傍晚</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p7.jpeg" alt="天空" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">天空</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/p8.jpeg" alt="眺望" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">眺望</h3>
+              </div>
+            </div>
+            <div class="carousel-slide" style="flex: 0 0 100%; height: 100%; position: relative;">
+              <img src="../assets/pictures/P9.jpeg" alt="夜跑" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 18px;">夜跑</h3>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 前进/后退按钮 -->
+          <button class="carousel-prev" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; z-index: 10; transition: background 0.3s ease;">
+            &lt;
+          </button>
+          <button class="carousel-next" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; z-index: 10; transition: background 0.3s ease;">
+            &gt;
+          </button>
+          
+          <!-- 轮播指示器 -->
+          <div class="carousel-indicators" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10;">
+            <button class="carousel-indicator active" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: white; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+            <button class="carousel-indicator" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; background: transparent; cursor: pointer; transition: all 0.3s ease;"></button>
+          </div>
+        </div>
+      </div>
+      
+      <script>
+        // 轮播功能实现
+        document.addEventListener('DOMContentLoaded', function() {
+          const carousel = document.querySelector('.carousel-slides');
+          const slides = document.querySelectorAll('.carousel-slide');
+          const prevBtn = document.querySelector('.carousel-prev');
+          const nextBtn = document.querySelector('.carousel-next');
+          const indicators = document.querySelectorAll('.carousel-indicator');
+          
+          let currentIndex = 0;
+          const slideCount = slides.length;
+          const slideWidth = 100; // 百分比
+          let autoSlideInterval;
+          
+          // 初始化轮播
+          function initCarousel() {
+            updateSlidePosition();
+            updateIndicators();
+            startAutoSlide();
+          }
+          
+          // 更新幻灯片位置
+          function updateSlidePosition() {
+            carousel.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+          }
+          
+          // 更新指示器状态
+          function updateIndicators() {
+            indicators.forEach((indicator, index) => {
+              if (index === currentIndex) {
+                indicator.classList.add('active');
+                indicator.style.background = 'white';
+              } else {
+                indicator.classList.remove('active');
+                indicator.style.background = 'transparent';
+              }
+            });
+          }
+          
+          // 下一张幻灯片
+          function nextSlide() {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateSlidePosition();
+            updateIndicators();
+            resetAutoSlide();
+          }
+          
+          // 上一张幻灯片
+          function prevSlide() {
+            currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            updateSlidePosition();
+            updateIndicators();
+            resetAutoSlide();
+          }
+          
+          // 跳转到指定幻灯片
+          function goToSlide(index) {
+            currentIndex = index;
+            updateSlidePosition();
+            updateIndicators();
+            resetAutoSlide();
+          }
+          
+          // 开始自动轮播
+          function startAutoSlide() {
+            autoSlideInterval = setInterval(nextSlide, 5000); // 每5秒切换一次
+          }
+          
+          // 重置自动轮播计时器
+          function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+          }
+          
+          // 事件监听
+          nextBtn.addEventListener('click', nextSlide);
+          prevBtn.addEventListener('click', prevSlide);
+          
+          indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => goToSlide(index));
+          });
+          
+          // 鼠标悬停时暂停轮播
+          const carouselContainer = document.querySelector('.carousel-container');
+          carouselContainer.addEventListener('mouseenter', () => {
+            clearInterval(autoSlideInterval);
+          });
+          
+          // 鼠标离开时恢复轮播
+          carouselContainer.addEventListener('mouseleave', startAutoSlide);
+          
+          // 响应式处理
+          function handleResize() {
+            updateSlidePosition();
+          }
+          
+          window.addEventListener('resize', handleResize);
+          
+          // 初始化
+          initCarousel();
+        });
+      </script>
+    </main>
+  </div>
+
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <p>&copy; 2026 重庆邮电大学 校园论坛</p>
+      <p style="font-size: 12px;">Web综合设计实践 | 联系我们: campus@cqupt.edu.cn</p>
+    </div>
+  </footer>
+
+  <script type="module" src="../JavaScript/discover.js"></script>
+</body>
+</html>

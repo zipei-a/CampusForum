@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>消息 - 校园论坛</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">校园论坛</div>
+    <div class="menu-toggle" id="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="menu" id="menu">
+      <a href="index.html">首页</a>
+      <a href="create.html">发帖</a>
+      <a href="discover.html">发现</a>
+      <a href="messages.html" class="active">消息</a>
+    </nav>
+    <div class="user" id="user-info">
+    </div>
+    <div class="user-avatar" id="user-avatar" style="display: none;" title="个人中心"></div>
+  </header>
+
+  <div class="container" style="max-width: 800px; margin: 0 auto; padding: 24px;">
+    <main class="main">
+      <div class="card" style="margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">系统通知</h2>
+          <button class="btn btn-sm btn-outline" id="mark-all-read">全部标为已读</button>
+        </div>
+        <div id="notifications">
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>评论回复</h2>
+        <div id="comment-replies" style="margin-top: 16px;">
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <p>&copy; 2026 重庆邮电大学 校园论坛</p>
+      <p style="font-size: 12px;">Web综合设计实践 | 联系我们: campus@cqupt.edu.cn</p>
+    </div>
+  </footer>
+
+  <script type="module" src="../JavaScript/messages.js"></script>
+</body>
+</html>

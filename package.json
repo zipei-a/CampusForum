@@ -1,0 +1,31 @@
+{
+  "name": "campus-forum-frontend",
+  "version": "1.0.0",
+  "description": "校园论坛前端项目",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo '请直接打开 Html/index.html 文件运行项目'",
+    "dev": "echo '开发模式：使用LocalStorage模拟数据'",
+    "build": "echo '纯前端项目，无需构建'"
+  },
+  "keywords": [
+    "campus",
+    "forum",
+    "frontend",
+    "javascript"
+  ],
+  "author": "前端开发组",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "<仓库地址>"
+  },
+  "bugs": {
+    "url": "<bug报告地址>"
+  },
+  "homepage": "<项目首页>"
+}

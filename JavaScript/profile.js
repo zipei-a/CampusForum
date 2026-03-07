@@ -1,4 +1,4 @@
-import { getCurrentUser, getPosts, getUserFavorites, logout, getUserProfileByUsername, getUserPosts } from './api.js';
+import { getCurrentUser, getPosts, getUserFavorites, logout, getUserProfileByUsername, getUserPosts, updateUserProfile, uploadImage } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { bindMenuToggle } from './utils.js';
@@ -43,8 +43,20 @@ async function loadProfile() {
   const avatar = document.getElementById('profile-avatar');
   const name = document.getElementById('profile-name');
   const bio = document.getElementById('profile-bio');
+  const header = document.getElementById('profile-header');
 
-  avatar.textContent = profileUser.username.charAt(0).toUpperCase();
+  // 显示头像（图片或首字母）
+  if (profileUser.avatar) {
+    avatar.innerHTML = `<img src="${profileUser.avatar}" alt="头像" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    avatar.textContent = profileUser.username.charAt(0).toUpperCase();
+  }
+
+  // 显示背景图
+  if (profileUser.cover_image) {
+    header.style.background = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${profileUser.cover_image}') center/cover no-repeat`;
+  }
+
   name.textContent = profileUser.username;
   bio.textContent = profileUser.bio || '这个人很懒，什么都没写~';
 
@@ -199,8 +211,39 @@ async function loadMyFavorites(container) {
 }
 
 function loadSettings(container) {
+  const avatarPreview = profileUser.avatar
+    ? `<img src="${profileUser.avatar}" alt="头像" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+    : `<span style="font-size:32px;color:#fff;">${currentUser.username.charAt(0).toUpperCase()}</span>`;
+
+  const coverPreview = profileUser.cover_image
+    ? `<img src="${profileUser.cover_image}" alt="背景" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`
+    : `<span style="color:#999;font-size:14px;">点击上传背景图</span>`;
+
   container.innerHTML = `
     <form id="settings-form">
+      <div class="form-group">
+        <label>头像</label>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div id="avatar-preview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#409eff,#66b1ff);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;border:3px solid #e0e0e0;" title="点击更换头像">
+            ${avatarPreview}
+          </div>
+          <div>
+            <button type="button" class="btn btn-sm btn-outline" id="avatar-upload-btn">更换头像</button>
+            <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">
+            <p style="color:#999;font-size:12px;margin-top:4px;">支持 jpg/png/gif/webp，最大 5MB</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>主页背景</label>
+        <div id="cover-preview" style="width:100%;height:150px;border-radius:8px;background:linear-gradient(135deg,#409eff,#66b1ff);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border:2px dashed #ddd;" title="点击更换背景图">
+          ${coverPreview}
+        </div>
+        <input type="file" id="cover-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">
+        <p style="color:#999;font-size:12px;margin-top:4px;">推荐尺寸 900×300，最大 5MB</p>
+      </div>
+
       <div class="form-group">
         <label for="username">用户名</label>
         <input type="text" id="username" class="form-control" value="${currentUser.username}" disabled style="background: #f5f5f5;" />
@@ -221,6 +264,45 @@ function loadSettings(container) {
     </form>
   `;
 
+  // 头像上传
+  const avatarInput = document.getElementById('avatar-input');
+  document.getElementById('avatar-upload-btn').addEventListener('click', () => avatarInput.click());
+  document.getElementById('avatar-preview').addEventListener('click', () => avatarInput.click());
+  avatarInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    showLoading();
+    try {
+      const url = await uploadImage(file);
+      document.getElementById('avatar-preview').innerHTML = `<img src="${url}" alt="头像" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      profileUser.avatar = url;
+      showToast('头像已更新，请点击保存修改', 'success');
+    } catch (err) {
+      showToast(err.message || '上传失败', 'error');
+    } finally {
+      hideLoading();
+    }
+  });
+
+  // 背景上传
+  const coverInput = document.getElementById('cover-input');
+  document.getElementById('cover-preview').addEventListener('click', () => coverInput.click());
+  coverInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    showLoading();
+    try {
+      const url = await uploadImage(file);
+      document.getElementById('cover-preview').innerHTML = `<img src="${url}" alt="背景" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+      profileUser.cover_image = url;
+      showToast('背景已更新，请点击保存修改', 'success');
+    } catch (err) {
+      showToast(err.message || '上传失败', 'error');
+    } finally {
+      hideLoading();
+    }
+  });
+
   document.getElementById('settings-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const bio = document.getElementById('bio').value.trim();
@@ -228,27 +310,31 @@ function loadSettings(container) {
 
     showLoading();
     try {
-      const users = JSON.parse(localStorage.getItem('campusForumData') || '{}').users || [];
-      const userIndex = users.findIndex(u => u.id === currentUser.id);
-      
-      if (userIndex > -1) {
-        users[userIndex].bio = bio;
-        users[userIndex].email = email;
-        
-        const data = JSON.parse(localStorage.getItem('campusForumData'));
-        data.users = users;
-        localStorage.setItem('campusForumData', JSON.stringify(data));
-        
-        const updatedUser = { ...currentUser, bio, email };
-        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        
-        currentUser = updatedUser;
-        document.getElementById('profile-bio').textContent = bio || '这个人很懒，什么都没写~';
-        
-        showToast('保存成功', 'success');
+      await updateUserProfile(currentUser.id, {
+        bio,
+        email,
+        avatar: profileUser.avatar || null,
+        cover_image: profileUser.cover_image || null
+      });
+
+      currentUser = { ...currentUser, bio, email, avatar: profileUser.avatar, cover_image: profileUser.cover_image };
+      profileUser = currentUser;
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+      // 刷新页面头部
+      const avatarEl = document.getElementById('profile-avatar');
+      if (profileUser.avatar) {
+        avatarEl.innerHTML = `<img src="${profileUser.avatar}" alt="头像" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
       }
+      const header = document.getElementById('profile-header');
+      if (profileUser.cover_image) {
+        header.style.background = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${profileUser.cover_image}') center/cover no-repeat`;
+      }
+      document.getElementById('profile-bio').textContent = bio || '这个人很懒，什么都没写~';
+
+      showToast('保存成功', 'success');
     } catch (e) {
-      showToast('保存失败', 'error');
+      showToast(e.message || '保存失败', 'error');
     } finally {
       hideLoading();
     }

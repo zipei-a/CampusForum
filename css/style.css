@@ -919,10 +919,13 @@ footer {
 /* 个人中心页面 */
 .profile-header {
   background: linear-gradient(135deg, #409eff 0%, #66b1ff 100%);
+  background-size: cover;
+  background-position: center;
   padding: 40px 24px;
   border-radius: 8px 8px 0 0;
   color: #fff;
   text-align: center;
+  position: relative;
 }
 
 .profile-avatar {
@@ -936,6 +939,7 @@ footer {
   font-size: 40px;
   margin: 0 auto 16px;
   border: 3px solid rgba(255, 255, 255, 0.5);
+  overflow: hidden;
 }
 
 .profile-name {

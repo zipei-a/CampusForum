@@ -305,6 +305,34 @@ export async function getUserPosts(userId) {
   }));
 }
 
+export async function updateUserProfile(userId, profileData) {
+  const data = await request(`/users/${userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(profileData)
+  });
+  // 同步更新本地存储
+  const current = getCurrentUser();
+  if (current && current.id === userId) {
+    const updated = { ...current, ...data.data };
+    localStorage.setItem('currentUser', JSON.stringify(updated));
+  }
+  return data.data;
+}
+
+export async function uploadImage(file) {
+  const token = getToken();
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await fetch(`${API_BASE}/upload/image`, {
+    method: 'POST',
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    body: formData
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || '上传失败');
+  return data.data.url;
+}
+
 // ============ 点赞接口 ============
 
 export async function toggleLike(postId) {

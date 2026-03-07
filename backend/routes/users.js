@@ -5,7 +5,7 @@ const { authRequired } = require('../middleware/auth');
 
 // GET /api/users/by-username/:username - 按用户名获取用户信息
 router.get('/by-username/:username', (req, res) => {
-  const user = get('SELECT id, username, avatar, email, bio, created_at FROM users WHERE username = ?', [req.params.username]);
+  const user = get('SELECT id, username, avatar, cover_image, email, bio, created_at FROM users WHERE username = ?', [req.params.username]);
   if (!user) return res.status(404).json({ code: 404, message: '用户不存在' });
 
   const postCount = get('SELECT COUNT(*) as count FROM posts WHERE author_id = ?', [user.id]);
@@ -15,7 +15,7 @@ router.get('/by-username/:username', (req, res) => {
 
 // GET /api/users/:id - 获取用户信息
 router.get('/:id', (req, res) => {
-  const user = get('SELECT id, username, avatar, email, bio, created_at FROM users WHERE id = ?', [req.params.id]);
+  const user = get('SELECT id, username, avatar, cover_image, email, bio, created_at FROM users WHERE id = ?', [req.params.id]);
 
   if (!user) return res.status(404).json({ code: 404, message: '用户不存在' });
 
@@ -30,13 +30,14 @@ router.put('/:id', authRequired, (req, res) => {
     return res.status(403).json({ code: 403, message: '无权限修改' });
   }
 
-  const { avatar, bio, email } = req.body;
+  const { avatar, bio, email, cover_image } = req.body;
   run(
-    'UPDATE users SET avatar = COALESCE(?, avatar), bio = COALESCE(?, bio), email = COALESCE(?, email), updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-    [avatar, bio, email, req.params.id]
+    'UPDATE users SET avatar = COALESCE(?, avatar), bio = COALESCE(?, bio), email = COALESCE(?, email), cover_image = COALESCE(?, cover_image), updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+    [avatar, bio, email, cover_image, req.params.id]
   );
 
-  res.json({ code: 200, message: '更新成功' });
+  const updatedUser = get('SELECT id, username, avatar, cover_image, email, bio FROM users WHERE id = ?', [req.params.id]);
+  res.json({ code: 200, message: '更新成功', data: updatedUser });
 });
 
 // GET /api/users/:id/posts - 获取用户发布的帖子

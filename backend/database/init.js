@@ -23,6 +23,7 @@ async function initDatabase() {
   db.run('PRAGMA foreign_keys = ON');
 
   initTables();
+  migrateDatabase();
   seedData();
   saveDatabase(); // 保存初始数据
 
@@ -48,6 +49,21 @@ setInterval(() => {
   if (db) saveDatabase();
 }, 30000);
 
+function migrateDatabase() {
+  // 为已有数据库添加 cover_image 列
+  try {
+    const columns = db.exec("PRAGMA table_info(users)");
+    if (columns.length > 0) {
+      const colNames = columns[0].values.map(row => row[1]);
+      if (!colNames.includes('cover_image')) {
+        db.run("ALTER TABLE users ADD COLUMN cover_image VARCHAR(255) DEFAULT ''");
+      }
+    }
+  } catch (e) {
+    console.log('数据库迁移跳过:', e.message);
+  }
+}
+
 function initTables() {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
@@ -56,6 +72,7 @@ function initTables() {
       password VARCHAR(255) NOT NULL,
       email VARCHAR(100) DEFAULT '',
       avatar VARCHAR(255) DEFAULT '',
+      cover_image VARCHAR(255) DEFAULT '',
       bio TEXT DEFAULT '',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

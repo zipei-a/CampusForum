@@ -7,7 +7,7 @@ export function showToast(message, type = "info") {
   toast.style.top = "20px";
   toast.style.right = "20px";
   toast.style.padding = "10px 20px";
-  toast.style.background = type === "success" ? "#67c23a" : type === "error" ? "#f56c6c" : "#909399";
+  toast.style.background = type === "success" ? "#4CAF50" : type === "error" ? "#f56c6c" : "#909399";
   toast.style.color = "#fff";
   toast.style.borderRadius = "4px";
   toast.style.zIndex = "9999";
@@ -33,7 +33,7 @@ export function showLoading() {
   loading.style.justifyContent = "center";
   loading.style.alignItems = "center";
   loading.style.zIndex = "9998";
-  loading.innerHTML = `<div class="spinner" style="width:40px;height:40px;border:4px solid #f3f3f3;border-top:4px solid #409eff;border-radius:50%;animation:spin 1s linear infinite;"></div><style>@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}</style>`;
+  loading.innerHTML = `<div class="spinner" style="width:40px;height:40px;border:4px solid #f3f3f3;border-top:4px solid #4CAF50;border-radius:50%;animation:spin 1s linear infinite;"></div><style>@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}</style>`;
   document.body.appendChild(loading);
 }
 

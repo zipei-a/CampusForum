@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="navbar">
-    <div class="logo">校园论坛</div>
+    <div class="logo">🎓 校园论坛</div>
     <div class="menu-toggle" id="menu-toggle">
       <span></span>
       <span></span>
@@ -26,8 +26,8 @@
   </header>
 
   <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 24px;">
-    <main class="main" style="max-width: 800px; width: 100%; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-      <div style="flex: 1; background: linear-gradient(135deg, #409eff 0%, #66b1ff 50%, #79bbff 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; color: #fff;">
+    <main class="main auth-container" style="max-width: 800px; width: 100%; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+      <div class="auth-panel" style="flex: 1; background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 50%, #81C784 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; color: #fff;">
         <div style="text-align: center;">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="margin-bottom: 16px;">
             <path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/><path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
@@ -36,7 +36,7 @@
           <p style="font-size: 14px; opacity: 0.9; line-height: 1.6;">分享校园生活<br>探索学习资源<br>连接志同道合的同学</p>
         </div>
       </div>
-      <div style="flex: 1; padding: 0;">
+      <div class="auth-form-wrapper" style="flex: 1; padding: 0;">
         <form id="login-form" class="card" style="border: none; box-shadow: none; margin: 0; border-radius: 0; height: 100%; display: flex; flex-direction: column; justify-content: center;">
         <h2 style="text-align: center; margin-bottom: 24px;">用户登录</h2>
         <div class="form-group">
@@ -52,11 +52,11 @@
             <input type="checkbox" id="remember" name="remember" style="margin: 0;" />
             记住我
           </label>
-          <a href="#" style="font-size: 14px; color: #409eff;">忘记密码？</a>
+          <a href="#" style="font-size: 14px; color: var(--primary-color);">忘记密码？</a>
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%;">登录</button>
         <p style="margin-top: 16px; text-align: center; font-size: 14px; color: #525e71;">
-          还没有账号？ <a href="register.html" style="color: #409eff;">立即注册</a>
+          还没有账号？ <a href="register.html" style="color: var(--primary-color);">立即注册</a>
         </p>
       </form>
       </div>

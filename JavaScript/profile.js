@@ -224,7 +224,7 @@ function loadSettings(container) {
       <div class="form-group">
         <label>头像</label>
         <div style="display:flex;align-items:center;gap:16px;">
-          <div id="avatar-preview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#409eff,#66b1ff);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;border:3px solid #e0e0e0;" title="点击更换头像">
+          <div id="avatar-preview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#4CAF50,#66BB6A);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;border:3px solid #e0e0e0;" title="点击更换头像">
             ${avatarPreview}
           </div>
           <div>
@@ -237,7 +237,7 @@ function loadSettings(container) {
 
       <div class="form-group">
         <label>主页背景</label>
-        <div id="cover-preview" style="width:100%;height:150px;border-radius:8px;background:linear-gradient(135deg,#409eff,#66b1ff);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border:2px dashed #ddd;" title="点击更换背景图">
+        <div id="cover-preview" style="width:100%;height:150px;border-radius:8px;background:linear-gradient(135deg,#4CAF50,#66BB6A);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;border:2px dashed #ddd;" title="点击更换背景图">
           ${coverPreview}
         </div>
         <input type="file" id="cover-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">

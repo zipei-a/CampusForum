@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="navbar">
-    <div class="logo">校园论坛</div>
+    <div class="logo">🎓 校园论坛</div>
     <div class="menu-toggle" id="menu-toggle">
       <span></span>
       <span></span>
@@ -26,8 +26,8 @@
   </header>
 
   <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 24px;">
-    <main class="main" style="max-width: 800px; width: 100%; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-      <div style="flex: 1; background: linear-gradient(135deg, #409eff 0%, #66b1ff 50%, #79bbff 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; color: #fff;">
+    <main class="main auth-container" style="max-width: 800px; width: 100%; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+      <div class="auth-panel" style="flex: 1; background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 50%, #81C784 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; color: #fff;">
         <div style="text-align: center;">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="margin-bottom: 16px;">
             <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/>
@@ -36,7 +36,7 @@
           <p style="font-size: 14px; opacity: 0.9; line-height: 1.6;">注册账号<br>成为校园社区的一员<br>和大家一起交流分享</p>
         </div>
       </div>
-      <div style="flex: 1; padding: 0;">
+      <div class="auth-form-wrapper" style="flex: 1; padding: 0;">
         <form id="register-form" class="card" style="border: none; box-shadow: none; margin: 0; border-radius: 0; height: 100%; display: flex; flex-direction: column; justify-content: center;">
         <h2 style="text-align: center; margin-bottom: 24px;">用户注册</h2>
         <div class="form-group">
@@ -58,12 +58,12 @@
         <div style="margin-bottom: 20px;">
           <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #525e71;">
             <input type="checkbox" id="agree" name="agree" style="margin: 0;" required />
-            我已阅读并同意<a href="#" style="color: #409eff;">服务条款</a>和<a href="#" style="color: #409eff;">隐私政策</a>
+            我已阅读并同意<a href="#" style="color: var(--primary-color);">服务条款</a>和<a href="#" style="color: var(--primary-color);">隐私政策</a>
           </label>
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%;">注册</button>
         <p style="margin-top: 16px; text-align: center; font-size: 14px; color: #525e71;">
-          已有账号？ <a href="login.html" style="color: #409eff;">立即登录</a>
+          已有账号？ <a href="login.html" style="color: var(--primary-color);">立即登录</a>
         </p>
       </form>
       </div>

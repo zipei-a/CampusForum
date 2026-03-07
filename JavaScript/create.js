@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (uploadArea && imageInput) {
     uploadArea.addEventListener('click', () => imageInput.click());
-    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#409eff'; uploadArea.style.background = '#f0f7ff'; });
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#4CAF50'; uploadArea.style.background = '#E8F5E9'; });
     uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#d9d9d9'; uploadArea.style.background = '#fafafa'; });
     uploadArea.addEventListener('drop', (e) => {
       e.preventDefault();

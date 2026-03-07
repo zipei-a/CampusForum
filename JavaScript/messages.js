@@ -129,7 +129,7 @@ async function loadCommentReplies() {
           <strong>${comment.author}</strong> 评论了你的帖子
         </div>
         <div class="notification-text">
-          <span style="color: #409eff;">《${comment.postTitle}》</span>：${comment.content}
+          <span style="color: #4CAF50;">《${comment.postTitle}》</span>：${comment.content}
         </div>
         <div class="notification-time">${comment.createdAt}</div>
       </div>

@@ -22,7 +22,7 @@ async function loadPost() {
     
     document.getElementById('post-detail').innerHTML = `
       <div style="margin-bottom: 16px;">
-        <a href="javascript:void(0)" onclick="window.history.length > 1 ? window.history.back() : location.href='index.html'" style="display: inline-flex; align-items: center; gap: 4px; color: #409eff; font-size: 14px; cursor: pointer;">
+        <a href="javascript:void(0)" onclick="window.history.length > 1 ? window.history.back() : location.href='index.html'" style="display: inline-flex; align-items: center; gap: 4px; color: #4CAF50; font-size: 14px; cursor: pointer;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           返回
         </a>
@@ -33,7 +33,7 @@ async function loadPost() {
           <button class="btn btn-sm btn-outline" onclick="confirmDeletePost(${id})">删除帖子</button>
         ` : ''}
       </div>
-      <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" style="color: #409eff; text-decoration: none;">${escapeHtml(post.author)}</a> | 分类: ${escapeHtml(getCategoryName(post.categoryId))} | ${post.createdAt}</div>
+      <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(post.author)}</a> | 分类: ${escapeHtml(getCategoryName(post.categoryId))} | ${post.createdAt}</div>
       <div style="margin-top: 16px; line-height: 1.8; white-space: pre-wrap;">${escapeHtml(post.content)}</div>
       ${post.tags && post.tags.length > 0 ? `
         <div class="post-tags" style="margin-top: 16px;">
@@ -60,7 +60,7 @@ async function loadPost() {
     const listEl = document.getElementById('comments-list');
     listEl.innerHTML = comments.map(c => `
       <div class="comment-item">
-        <div class="comment-meta"><a href="profile.html?username=${encodeURIComponent(c.author)}" style="color: #409eff; text-decoration: none;">${escapeHtml(c.author)}</a> | ${c.createdAt}</div>
+        <div class="comment-meta"><a href="profile.html?username=${encodeURIComponent(c.author)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(c.author)}</a> | ${c.createdAt}</div>
         <div style="margin-top: 8px;">${escapeHtml(c.content)}</div>
       </div>
     `).join('');

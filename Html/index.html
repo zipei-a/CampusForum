@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="navbar">
-    <div class="logo">校园论坛</div>
+    <div class="logo">🎓 校园论坛</div>
     <div class="menu-toggle" id="menu-toggle">
       <span></span>
       <span></span>
@@ -25,50 +25,171 @@
     <div class="user-avatar" id="user-avatar" style="display: none;" title="个人中心"></div>
   </header>
 
-  <div class="container" style="display: flex; padding: 24px 0;">
-    <aside class="sidebar">
-      <h3>📂 论坛分类</h3>
-      <ul>
-        <li class="active">📋 全部</li>
-        <li>📚 学习交流</li>
-        <li>🌟 生活分享</li>
-        <li>📢 活动通知</li>
-        <li>❓ 问题求助</li>
-        <li>🎯 兴趣爱好</li>
-      </ul>
-      
-      <h3>🔥 热门标签</h3>
-      <ul>
-        <li>前端开发</li>
-        <li>后端开发</li>
-        <li>考研</li>
-        <li>就业</li>
-        <li>社团</li>
-        <li>比赛</li>
-      </ul>
-    </aside>
-    
-    <main class="main">
-      <div class="search-box" style="margin-bottom: 16px; max-width: 100%;">
-        <input type="text" id="search-input" class="search-input" placeholder="搜索帖子标题或内容..." />
-        <span class="search-icon" id="search-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="M21 21l-4.35-4.35"></path>
-          </svg>
-        </span>
+  <!-- 二级分类导航条 -->
+  <nav class="sub-nav">
+    <a href="index.html" class="active">校园论坛</a>
+    <a href="#" onclick="filterCategory(2);return false;">学习交流</a>
+    <a href="#" onclick="filterCategory(3);return false;">生活分享</a>
+    <a href="#" onclick="filterCategory(4);return false;">活动通知</a>
+    <a href="#" onclick="filterCategory(5);return false;">问题求助</a>
+    <a href="#" onclick="filterCategory(6);return false;">兴趣爱好</a>
+    <a href="discover.html">校内资源</a>
+  </nav>
+
+  <!-- 搜索栏 + 热搜词 -->
+  <div class="forum-search-bar">
+    <div class="search-box">
+      <input type="text" id="search-input" class="search-input" placeholder="请输入搜索内容" />
+      <span class="search-icon" id="search-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+        </svg>
+      </span>
+    </div>
+    <div class="hot-words">
+      <span class="label">🔥 热搜:</span>
+      <a href="#" onclick="searchHot('考研');return false;">考研</a>
+      <a href="#" onclick="searchHot('就业');return false;">就业</a>
+      <a href="#" onclick="searchHot('社团');return false;">社团</a>
+      <a href="#" onclick="searchHot('比赛');return false;">比赛</a>
+      <a href="#" onclick="searchHot('前端开发');return false;">前端开发</a>
+      <a href="#" onclick="searchHot('宿舍');return false;">宿舍</a>
+    </div>
+  </div>
+
+  <div class="container main-layout" style="display: flex; padding: 20px 0; gap: 20px;">
+    <!-- 左侧主内容 -->
+    <div style="flex: 1; min-width: 0;">
+      <!-- 公告栏 -->
+      <div class="notice-bar">
+        <span class="notice-icon">📢</span>
+        <span class="notice-text">欢迎来到校园论坛！请文明发言，共建和谐校园社区。<a href="discover.html">了解更多 →</a></span>
       </div>
-      <div class="card" style="margin-bottom: 24px;">
+
+      <!-- 图文热点 + 最新帖子 -->
+      <div class="hot-section" id="hot-section">
+        <div class="hot-carousel" id="hot-carousel">
+          <!-- JS 动态插入热门轮播 -->
+        </div>
+        <div style="flex: 1; padding: 0;">
+          <!-- 帖子标签导航 -->
+          <div class="post-tabs" id="post-tabs">
+            <div class="post-tab active" data-tab="latest">最新发贴</div>
+            <div class="post-tab" data-tab="hot">最新回复</div>
+            <div class="post-tab" data-tab="essence">热门推荐</div>
+          </div>
+          <div class="forum-post-list" id="forum-post-list">
+            <!-- JS 动态插入 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 完整帖子列表 -->
+      <div class="card" style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h2 id="post-list-title">最新帖子</h2>
-          <a href="create.html" class="btn btn-primary">发布帖子</a>
+          <h2 id="post-list-title">📋 全部帖子</h2>
+          <a href="create.html" class="btn btn-primary">✏️ 发布帖子</a>
         </div>
         <section id="post-list" class="post-list">
         </section>
         <div id="pagination-container"></div>
       </div>
-    </main>
+    </div>
+
+    <!-- 右侧信息面板 -->
+    <div class="info-panel" id="info-panel">
+      <!-- 论坛统计 -->
+      <div class="panel-card">
+        <div class="panel-header">📊 论坛统计</div>
+        <div class="panel-body">
+          <div class="forum-stats">
+            <div class="forum-stat-item">
+              <div class="forum-stat-value" id="stat-posts">--</div>
+              <div class="forum-stat-label">帖子</div>
+            </div>
+            <div class="forum-stat-item">
+              <div class="forum-stat-value" id="stat-users">--</div>
+              <div class="forum-stat-label">用户</div>
+            </div>
+            <div class="forum-stat-item">
+              <div class="forum-stat-value" id="stat-comments">--</div>
+              <div class="forum-stat-label">评论</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速入口 -->
+      <div class="panel-card">
+        <div class="panel-header">⚡ 快速入口</div>
+        <div class="quick-links">
+          <a class="quick-link" href="create.html">
+            <span class="ql-icon" style="background: #E8F5E9; color: #4CAF50;">✏️</span>
+            <span class="ql-label">发帖</span>
+          </a>
+          <a class="quick-link" href="discover.html">
+            <span class="ql-icon" style="background: #E3F2FD; color: #2196F3;">🔍</span>
+            <span class="ql-label">发现</span>
+          </a>
+          <a class="quick-link" href="messages.html">
+            <span class="ql-icon" style="background: #FFF3E0; color: #FF9800;">💬</span>
+            <span class="ql-label">消息</span>
+          </a>
+          <a class="quick-link" href="profile.html">
+            <span class="ql-icon" style="background: #FCE4EC; color: #E91E63;">👤</span>
+            <span class="ql-label">我的</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 热门标签 -->
+      <div class="panel-card">
+        <div class="panel-header">🏷️ 热门标签</div>
+        <div class="panel-body" id="hot-tags-panel">
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag" onclick="filterByTag('前端开发')">前端开发</span>
+            <span class="tag" onclick="filterByTag('后端开发')">后端开发</span>
+            <span class="tag" onclick="filterByTag('考研')">考研</span>
+            <span class="tag" onclick="filterByTag('就业')">就业</span>
+            <span class="tag" onclick="filterByTag('社团')">社团</span>
+            <span class="tag" onclick="filterByTag('比赛')">比赛</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 活跃用户 -->
+      <div class="panel-card">
+        <div class="panel-header">🌟 活跃用户</div>
+        <div class="panel-body" id="active-users-panel">
+          <!-- JS 动态插入 -->
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- 隐藏的旧侧边栏用于分类逻辑兼容 -->
+  <aside class="sidebar" id="old-sidebar" style="display: none;">
+    <h3>📂 论坛分类</h3>
+    <ul>
+      <li class="active">📋 全部</li>
+      <li>📚 学习交流</li>
+      <li>🌟 生活分享</li>
+      <li>📢 活动通知</li>
+      <li>❓ 问题求助</li>
+      <li>🎯 兴趣爱好</li>
+    </ul>
+    
+    <h3>🔥 热门标签</h3>
+    <ul>
+      <li>前端开发</li>
+      <li>后端开发</li>
+      <li>考研</li>
+      <li>就业</li>
+      <li>社团</li>
+      <li>比赛</li>
+    </ul>
+  </aside>
 
   <footer>
     <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">

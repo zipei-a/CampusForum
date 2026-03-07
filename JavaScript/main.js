@@ -84,7 +84,7 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
         <article class="post-item">
           <div style="cursor: pointer;" onclick="location.href='detail.html?id=${post.id}'">
             <h3>${post.title}</h3>
-            <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" onclick="event.stopPropagation()" style="color: #409eff; text-decoration: none;">${post.author}</a> | 分类: ${categoryName} | ${post.createdAt}</div>
+            <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" onclick="event.stopPropagation()" style="color: #4CAF50; text-decoration: none;">${post.author}</a> | 分类: ${categoryName} | ${post.createdAt}</div>
             <div class="post-summary">${post.content.substring(0, 100)}...</div>
             ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
           </div>
@@ -404,6 +404,194 @@ window.filterByTag = filterByTag;
 window.handleLike = handleLike;
 window.handleFavorite = handleFavorite;
 
+// ============ 论坛风格新增功能 ============
+
+// 二级导航分类筛选
+function filterCategory(categoryId) {
+  // 更新二级导航active状态
+  const subNavLinks = document.querySelectorAll('.sub-nav a');
+  subNavLinks.forEach((a, i) => {
+    a.classList.toggle('active', i === categoryId - 1);
+  });
+  
+  // 同步隐藏侧边栏的分类选中
+  const sidebarCategories = document.querySelectorAll('#old-sidebar ul:nth-child(2) li');
+  sidebarCategories.forEach((li, index) => {
+    li.classList.toggle('active', index === categoryId - 1);
+  });
+  
+  // 更新标题
+  const titleEl = document.getElementById('post-list-title');
+  const categoryNames = ['📋 全部帖子', '📚 学习交流', '🌟 生活分享', '📢 活动通知', '❓ 问题求助', '🎯 兴趣爱好'];
+  if (titleEl) titleEl.textContent = categoryNames[categoryId - 1] || '📋 全部帖子';
+
+  // 更新URL
+  const url = new URL(window.location.href);
+  url.searchParams.set('category', categoryId);
+  url.searchParams.delete('tag');
+  history.pushState({ categoryId, tagName: null }, '', url.toString());
+  
+  renderPosts(categoryId, null, 1);
+}
+window.filterCategory = filterCategory;
+
+// 热搜词搜索
+function searchHot(keyword) {
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.value = keyword;
+  handleSearch(keyword);
+}
+window.searchHot = searchHot;
+
+// 渲染论坛风格的帖子缩略列表（图文热点右侧）
+async function renderForumPostList() {
+  const container = document.getElementById('forum-post-list');
+  if (!container) return;
+  
+  try {
+    let posts = cache.get('posts_1_all');
+    if (!posts) {
+      posts = await getPosts();
+      if (posts) cache.set('posts_1_all', posts, 30000);
+    }
+    if (!posts || posts.length === 0) return;
+
+    const latestPosts = posts.slice(0, 10);
+    container.innerHTML = latestPosts.map(post => {
+      const categoryName = getCategoryName(post.categoryId);
+      return `
+        <div class="forum-post-item">
+          <span class="category-tag">【${categoryName}】</span>
+          <a class="post-link" href="detail.html?id=${post.id}">${post.title}</a>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    console.error('渲染论坛帖子列表失败:', e);
+  }
+}
+
+// 渲染热门轮播图
+function renderHotCarousel() {
+  const carousel = document.getElementById('hot-carousel');
+  if (!carousel) return;
+  
+  const images = [
+    { src: '../assets/pictures/p1.jpeg', title: '校园夜景' },
+    { src: '../assets/pictures/p2.jpeg', title: '银杏大道' },
+    { src: '../assets/pictures/p3.jpeg', title: '教学楼' },
+    { src: '../assets/pictures/p4.jpeg', title: '信科楼' },
+    { src: '../assets/pictures/p5.jpeg', title: '自然风光' },
+    { src: '../assets/pictures/p6.jpeg', title: '傍晚美景' }
+  ];
+  
+  let currentIndex = 0;
+  
+  carousel.innerHTML = `
+    <img src="${images[0].src}" alt="${images[0].title}" id="hot-carousel-img" style="width:100%;height:100%;object-fit:cover;">
+    <div class="carousel-caption" id="hot-carousel-caption">${images[0].title}</div>
+    <div class="carousel-dots">
+      ${images.map((_, i) => `<span class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}">${i + 1}</span>`).join('')}
+    </div>
+  `;
+  
+  const img = document.getElementById('hot-carousel-img');
+  const caption = document.getElementById('hot-carousel-caption');
+  const dots = carousel.querySelectorAll('.carousel-dot');
+  
+  function showSlide(index) {
+    currentIndex = index;
+    if (img) {
+      img.style.opacity = '0';
+      setTimeout(() => {
+        img.src = images[index].src;
+        img.alt = images[index].title;
+        if (caption) caption.textContent = images[index].title;
+        img.style.opacity = '1';
+      }, 250);
+    }
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+  }
+  
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => showSlide(parseInt(dot.dataset.index)));
+  });
+  
+  // 自动轮播
+  setInterval(() => {
+    showSlide((currentIndex + 1) % images.length);
+  }, 4000);
+}
+
+// 渲染论坛统计
+async function renderForumStats() {
+  try {
+    let posts = cache.get('posts_1_all');
+    if (!posts) {
+      posts = await getPosts();
+    }
+    const statPosts = document.getElementById('stat-posts');
+    const statComments = document.getElementById('stat-comments');
+    const statUsers = document.getElementById('stat-users');
+    
+    if (statPosts && posts) statPosts.textContent = posts.length;
+    if (statComments && posts) {
+      const totalComments = posts.reduce((sum, p) => sum + (p.comments ? p.comments.length : 0), 0);
+      statComments.textContent = totalComments;
+    }
+    if (statUsers) {
+      const uniqueAuthors = new Set(posts ? posts.map(p => p.author) : []);
+      statUsers.textContent = uniqueAuthors.size;
+    }
+  } catch (e) {
+    console.error('渲染论坛统计失败:', e);
+  }
+}
+
+// 帖子标签导航切换
+function bindPostTabs() {
+  const tabs = document.querySelectorAll('.post-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', async function() {
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      const tabType = this.dataset.tab;
+      const container = document.getElementById('forum-post-list');
+      if (!container) return;
+      
+      let posts = cache.get('posts_1_all');
+      if (!posts) {
+        posts = await getPosts();
+        if (posts) cache.set('posts_1_all', posts, 30000);
+      }
+      if (!posts) return;
+      
+      let displayPosts;
+      if (tabType === 'hot') {
+        // 最新回复 - 按评论数排序
+        displayPosts = [...posts].sort((a, b) => (b.comments?.length || 0) - (a.comments?.length || 0)).slice(0, 10);
+      } else if (tabType === 'essence') {
+        // 热门推荐 - 按点赞数排序
+        displayPosts = [...posts].sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0)).slice(0, 10);
+      } else {
+        // 最新发帖
+        displayPosts = posts.slice(0, 10);
+      }
+      
+      container.innerHTML = displayPosts.map(post => {
+        const categoryName = getCategoryName(post.categoryId);
+        return `
+          <div class="forum-post-item">
+            <span class="category-tag">【${categoryName}】</span>
+            <a class="post-link" href="detail.html?id=${post.id}">${post.title}</a>
+          </div>
+        `;
+      }).join('');
+    });
+  });
+}
+
 // ============ 搜索功能 ============
 let currentSearchKeyword = null;
 
@@ -524,6 +712,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 更新通知徽章
     console.log('更新通知徽章');
     updateNotificationBadge();
+    
+    // 论坛风格新组件初始化
+    console.log('初始化论坛风格组件');
+    renderHotCarousel();
+    renderForumPostList();
+    renderForumStats();
+    bindPostTabs();
     
     console.log('DOMContentLoaded事件处理完成');
   } catch (e) {

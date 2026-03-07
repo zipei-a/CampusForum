@@ -30,7 +30,7 @@ async function loadHotPosts() {
           <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: ${index < 3 ? 'linear-gradient(135deg, #ff6b6b, #f56c6c)' : '#eee'}; color: ${index < 3 ? '#fff' : '#999'}; font-size: 13px; font-weight: 600; flex-shrink: 0;">${index + 1}</span>
           <div style="flex: 1;">
             <h3>${post.title}</h3>
-            <div class="post-meta">作者: ${post.author} | ${post.createdAt}</div>
+            <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" onclick="event.stopPropagation()" style="color: #409eff; text-decoration: none;">${post.author}</a> | ${post.createdAt}</div>
             <div class="post-summary">${(post.content || '').substring(0, 100)}...</div>
             <div class="post-stats" style="margin-top: 8px;">
               <span class="stat-item">
@@ -83,7 +83,7 @@ async function loadRecommendedUsers() {
     
     const colors = ['#409eff', '#67c23a', '#e6a23c', '#f56c6c', '#909399', '#b37feb'];
     container.innerHTML = activeUsers.map((user, i) => `
-      <div class="user-card" style="width: calc(33.333% - 12px); min-width: 180px;">
+      <div class="user-card" style="width: calc(33.333% - 12px); min-width: 180px; cursor: pointer;" onclick="location.href='profile.html?username=${encodeURIComponent(user.username)}'">
         <div class="user-avatar" style="background: ${colors[i % colors.length]}; width: 48px; height: 48px; font-size: 20px; flex-shrink: 0;">
           ${user.username.charAt(0).toUpperCase()}
         </div>

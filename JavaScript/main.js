@@ -84,7 +84,7 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
         <article class="post-item">
           <div style="cursor: pointer;" onclick="location.href='detail.html?id=${post.id}'">
             <h3>${post.title}</h3>
-            <div class="post-meta">作者: ${post.author} | 分类: ${categoryName} | ${post.createdAt}</div>
+            <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" onclick="event.stopPropagation()" style="color: #409eff; text-decoration: none;">${post.author}</a> | 分类: ${categoryName} | ${post.createdAt}</div>
             <div class="post-summary">${post.content.substring(0, 100)}...</div>
             ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
           </div>

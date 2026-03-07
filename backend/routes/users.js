@@ -3,6 +3,16 @@ const router = express.Router();
 const { all, get, run } = require('../database/helpers');
 const { authRequired } = require('../middleware/auth');
 
+// GET /api/users/by-username/:username - 按用户名获取用户信息
+router.get('/by-username/:username', (req, res) => {
+  const user = get('SELECT id, username, avatar, email, bio, created_at FROM users WHERE username = ?', [req.params.username]);
+  if (!user) return res.status(404).json({ code: 404, message: '用户不存在' });
+
+  const postCount = get('SELECT COUNT(*) as count FROM posts WHERE author_id = ?', [user.id]);
+  const likeCount = get('SELECT COALESCE(SUM(like_count), 0) as count FROM posts WHERE author_id = ?', [user.id]);
+  res.json({ code: 200, data: { ...user, postCount: postCount ? postCount.count : 0, likeCount: likeCount ? likeCount.count : 0 } });
+});
+
 // GET /api/users/:id - 获取用户信息
 router.get('/:id', (req, res) => {
   const user = get('SELECT id, username, avatar, email, bio, created_at FROM users WHERE id = ?', [req.params.id]);
@@ -10,7 +20,8 @@ router.get('/:id', (req, res) => {
   if (!user) return res.status(404).json({ code: 404, message: '用户不存在' });
 
   const postCount = get('SELECT COUNT(*) as count FROM posts WHERE author_id = ?', [user.id]);
-  res.json({ code: 200, data: { ...user, postCount: postCount ? postCount.count : 0 } });
+  const likeCount = get('SELECT COALESCE(SUM(like_count), 0) as count FROM posts WHERE author_id = ?', [user.id]);
+  res.json({ code: 200, data: { ...user, postCount: postCount ? postCount.count : 0, likeCount: likeCount ? likeCount.count : 0 } });
 });
 
 // PUT /api/users/:id - 更新用户信息

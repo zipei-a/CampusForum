@@ -284,6 +284,27 @@ export function isPostFavorited(postId) {
   return false;
 }
 
+// ============ 用户主页接口 ============
+
+export async function getUserProfileByUsername(username) {
+  const data = await request(`/users/by-username/${encodeURIComponent(username)}`);
+  return data.data;
+}
+
+export async function getUserPosts(userId) {
+  const data = await request(`/users/${userId}/posts`);
+  return data.data.posts.map(p => ({
+    id: p.id,
+    title: p.title,
+    content: p.content || p.summary,
+    author: p.author.username,
+    createdAt: p.createdAt,
+    viewCount: p.viewCount,
+    likeCount: p.likeCount,
+    commentCount: p.commentCount
+  }));
+}
+
 // ============ 点赞接口 ============
 
 export async function toggleLike(postId) {

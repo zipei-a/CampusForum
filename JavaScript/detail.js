@@ -33,7 +33,7 @@ async function loadPost() {
           <button class="btn btn-sm btn-outline" onclick="confirmDeletePost(${id})">删除帖子</button>
         ` : ''}
       </div>
-      <div class="post-meta">作者: ${escapeHtml(post.author)} | 分类: ${escapeHtml(getCategoryName(post.categoryId))} | ${post.createdAt}</div>
+      <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" style="color: #409eff; text-decoration: none;">${escapeHtml(post.author)}</a> | 分类: ${escapeHtml(getCategoryName(post.categoryId))} | ${post.createdAt}</div>
       <div style="margin-top: 16px; line-height: 1.8; white-space: pre-wrap;">${escapeHtml(post.content)}</div>
       ${post.tags && post.tags.length > 0 ? `
         <div class="post-tags" style="margin-top: 16px;">
@@ -60,7 +60,7 @@ async function loadPost() {
     const listEl = document.getElementById('comments-list');
     listEl.innerHTML = comments.map(c => `
       <div class="comment-item">
-        <div class="comment-meta">${escapeHtml(c.author)} | ${c.createdAt}</div>
+        <div class="comment-meta"><a href="profile.html?username=${encodeURIComponent(c.author)}" style="color: #409eff; text-decoration: none;">${escapeHtml(c.author)}</a> | ${c.createdAt}</div>
         <div style="margin-top: 8px;">${escapeHtml(c.content)}</div>
       </div>
     `).join('');

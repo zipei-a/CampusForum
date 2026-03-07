@@ -1,29 +1,64 @@
-import { getCurrentUser, getPosts, getUserFavorites, logout } from './api.js';
+import { getCurrentUser, getPosts, getUserFavorites, logout, getUserProfileByUsername, getUserPosts } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { bindMenuToggle } from './utils.js';
 
 let currentUser = null;
+let profileUser = null; // 正在查看的用户
+let isOwnProfile = true; // 是否是自己的主页
 let currentTab = 'posts';
 
 async function loadProfile() {
   currentUser = getCurrentUser();
-  
-  if (!currentUser) {
-    showToast('请先登录', 'error');
-    setTimeout(() => {
-      window.location.href = 'login.html';
-    }, 1000);
-    return;
+  const params = new URLSearchParams(window.location.search);
+  const viewUsername = params.get('username');
+
+  // 判断是查看他人主页还是自己的
+  if (viewUsername && (!currentUser || viewUsername !== currentUser.username)) {
+    // 查看他人主页
+    isOwnProfile = false;
+    showLoading();
+    try {
+      profileUser = await getUserProfileByUsername(viewUsername);
+    } catch (e) {
+      showToast('用户不存在', 'error');
+      setTimeout(() => window.history.back(), 1000);
+      return;
+    } finally {
+      hideLoading();
+    }
+  } else {
+    // 查看自己的主页
+    isOwnProfile = true;
+    if (!currentUser) {
+      showToast('请先登录', 'error');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+      return;
+    }
+    profileUser = currentUser;
   }
+
+  document.title = `${profileUser.username} 的主页 - 校园论坛`;
 
   const avatar = document.getElementById('profile-avatar');
   const name = document.getElementById('profile-name');
   const bio = document.getElementById('profile-bio');
 
-  avatar.textContent = currentUser.username.charAt(0).toUpperCase();
-  name.textContent = currentUser.username;
-  bio.textContent = currentUser.bio || '这个人很懒，什么都没写~';
+  avatar.textContent = profileUser.username.charAt(0).toUpperCase();
+  name.textContent = profileUser.username;
+  bio.textContent = profileUser.bio || '这个人很懒，什么都没写~';
+
+  // 他人主页隐藏收藏和设置 tab
+  if (!isOwnProfile) {
+    const tabs = document.getElementById('profile-tabs');
+    if (tabs) {
+      tabs.querySelectorAll('.profile-tab').forEach(tab => {
+        if (tab.dataset.tab === 'favorites' || tab.dataset.tab === 'settings') {
+          tab.style.display = 'none';
+        }
+      });
+    }
+  }
 
   await loadStats();
   await loadTabContent(currentTab);
@@ -32,19 +67,22 @@ async function loadProfile() {
 async function loadStats() {
   showLoading();
   try {
-    const posts = await getPosts();
-    const userPosts = posts.filter(p => p.author === currentUser.username);
-    
-    const favorites = await getUserFavorites();
-    
-    let totalLikes = 0;
-    userPosts.forEach(post => {
-      totalLikes += post.likeCount || 0;
-    });
+    if (isOwnProfile) {
+      const posts = await getPosts();
+      const userPosts = posts.filter(p => p.author === profileUser.username);
+      const favorites = await getUserFavorites();
+      let totalLikes = 0;
+      userPosts.forEach(post => { totalLikes += post.likeCount || 0; });
 
-    document.getElementById('post-count').textContent = userPosts.length;
-    document.getElementById('favorite-count').textContent = favorites.length;
-    document.getElementById('like-count').textContent = totalLikes;
+      document.getElementById('post-count').textContent = userPosts.length;
+      document.getElementById('favorite-count').textContent = favorites.length;
+      document.getElementById('like-count').textContent = totalLikes;
+    } else {
+      // 他人主页使用后端返回的数据
+      document.getElementById('post-count').textContent = profileUser.postCount || 0;
+      document.getElementById('favorite-count').textContent = '-';
+      document.getElementById('like-count').textContent = profileUser.likeCount || 0;
+    }
   } catch (e) {
     console.error('加载统计数据失败:', e);
   } finally {
@@ -60,10 +98,10 @@ async function loadTabContent(tab) {
       await loadMyPosts(container);
       break;
     case 'favorites':
-      await loadMyFavorites(container);
+      if (isOwnProfile) await loadMyFavorites(container);
       break;
     case 'settings':
-      loadSettings(container);
+      if (isOwnProfile) loadSettings(container);
       break;
   }
 }
@@ -71,8 +109,13 @@ async function loadTabContent(tab) {
 async function loadMyPosts(container) {
   showLoading();
   try {
-    const posts = await getPosts();
-    const userPosts = posts.filter(p => p.author === currentUser.username);
+    let userPosts;
+    if (isOwnProfile) {
+      const posts = await getPosts();
+      userPosts = posts.filter(p => p.author === profileUser.username);
+    } else {
+      userPosts = await getUserPosts(profileUser.id);
+    }
     
     if (userPosts.length === 0) {
       container.innerHTML = `

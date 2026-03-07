@@ -49,7 +49,7 @@ async function loadPost() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
           ${post.likeCount || 0} 点赞
         </span>
-        <span class="stat-item">
+        <span class="stat-item" onclick="document.getElementById('comments-section').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="查看评论">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           ${post.commentCount || 0} 评论
         </span>
@@ -116,9 +116,14 @@ window.confirmDeletePost = confirmDeletePost;
 window.deletePostById = deletePostById;
 
 // 初始化
-function init() {
+async function init() {
   checkAuth();
-  loadPost();
+  await loadPost();
+  // 支持 #comments-section 锚点自动滚动到评论区
+  if (window.location.hash === '#comments-section') {
+    const el = document.getElementById('comments-section');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 init();

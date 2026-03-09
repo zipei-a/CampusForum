@@ -2174,3 +2174,104 @@ footer {
     background: #fff;
   }
 }
+
+/* Discover - 教务在线入口 */
+.academic-portal {
+  padding: 24px;
+}
+
+.academic-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e6eee6;
+}
+
+.academic-header h2 {
+  margin-bottom: 8px;
+}
+
+.academic-header p {
+  color: #5f6b5f;
+  font-size: 14px;
+}
+
+.jw-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.jw-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  min-height: 120px;
+  border: 1px solid #cfe4cf;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f5fcf5 0%, #ecf7ec 100%);
+  color: #1f4d2d;
+  padding: 14px 12px;
+  transition: all 0.22s ease;
+  text-decoration: none;
+}
+
+.jw-card:hover {
+  transform: translateY(-2px);
+  border-color: #8dc88d;
+  box-shadow: 0 6px 14px rgba(56, 142, 60, 0.15);
+  color: #14521e;
+}
+
+.jw-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #d8edd8;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+
+.jw-card-title {
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-family: 'Microsoft Yahei', 'PingFang SC', sans-serif;
+}
+
+.jw-card-desc {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+  .academic-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .jw-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .jw-card-title {
+    font-size: 14px;
+  }
+
+  .jw-card-desc {
+    font-size: 11px;
+  }
+}

@@ -171,6 +171,35 @@ function initTables() {
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title VARCHAR(100) NOT NULL,
+      description TEXT NOT NULL,
+      contact VARCHAR(100) NOT NULL,
+      salary VARCHAR(50) DEFAULT '',
+      location VARCHAR(100) DEFAULT '',
+      publisher_id INTEGER NOT NULL,
+      status VARCHAR(10) DEFAULT 'open',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (publisher_id) REFERENCES users(id)
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS job_applications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      job_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL,
+      name VARCHAR(50) NOT NULL,
+      phone VARCHAR(20) NOT NULL,
+      message TEXT DEFAULT '',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
 }
 
 function seedData() {

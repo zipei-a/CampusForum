@@ -27,17 +27,94 @@
 
   <div class="container" style="max-width: 1100px; margin: 0 auto; padding: 24px;">
     <main class="main">
-      <section class="academic-portal card">
-        <div class="academic-header">
-          <div>
+      <!-- 教务在线入口 -->
+      <section class="discover-card card">
+        <div class="discover-card-header">
+          <div class="discover-card-icon">🎓</div>
+          <div class="discover-card-info">
             <h2>教务在线</h2>
-            <p>一站式访问课表、成绩、考试与学业服务，点击卡片可直达对应板块。</p>
+            <p>访问学校教务系统，查询课表、成绩、考试安排等学业信息</p>
           </div>
-          <a id="jw-home-link" class="btn btn-outline" href="#" target="_blank" rel="noopener noreferrer">打开教务首页</a>
+          <a id="jw-home-link" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">进入教务系统 →</a>
         </div>
-        <div id="jw-grid" class="jw-grid"></div>
+      </section>
+
+      <!-- 接发兼职板块 -->
+      <section class="discover-card card">
+        <div class="discover-card-header" style="border-bottom: 1px solid #e6eee6; padding-bottom: 16px; margin-bottom: 16px;">
+          <div class="discover-card-icon">💼</div>
+          <div class="discover-card-info">
+            <h2>校园兼职</h2>
+            <p>发布或寻找校内外兼职，勤工俭学好帮手</p>
+          </div>
+          <button class="btn btn-primary" id="btn-publish-job" onclick="document.getElementById('job-publish-modal').style.display='flex'">发布兼职</button>
+        </div>
+        <div id="job-list" class="job-list">
+          <div class="loading-placeholder">加载中...</div>
+        </div>
       </section>
     </main>
+  </div>
+
+  <!-- 发布兼职弹窗 -->
+  <div class="modal-overlay" id="job-publish-modal" style="display:none">
+    <div class="modal-box card">
+      <div class="modal-header">
+        <h3>📝 发布兼职</h3>
+        <button class="modal-close" onclick="document.getElementById('job-publish-modal').style.display='none'">&times;</button>
+      </div>
+      <form id="job-publish-form">
+        <div class="form-group">
+          <label>兼职标题 <span class="required">*</span></label>
+          <input type="text" name="title" placeholder="如：周末传单派发" required maxlength="100"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>薪资待遇</label>
+            <input type="text" name="salary" placeholder="如：120元/天" maxlength="50"/>
+          </div>
+          <div class="form-group">
+            <label>工作地点</label>
+            <input type="text" name="location" placeholder="如：学校南门" maxlength="100"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>联系方式 <span class="required">*</span></label>
+          <input type="text" name="contact" placeholder="手机号或微信" required maxlength="100"/>
+        </div>
+        <div class="form-group">
+          <label>兼职描述 <span class="required">*</span></label>
+          <textarea name="description" rows="4" placeholder="详细描述工作内容、时间、要求等" required maxlength="1000"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">发布</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 报名弹窗 -->
+  <div class="modal-overlay" id="job-apply-modal" style="display:none">
+    <div class="modal-box card">
+      <div class="modal-header">
+        <h3>📋 报名兼职</h3>
+        <button class="modal-close" onclick="document.getElementById('job-apply-modal').style.display='none'">&times;</button>
+      </div>
+      <form id="job-apply-form">
+        <input type="hidden" name="jobId" />
+        <div class="form-group">
+          <label>姓名 <span class="required">*</span></label>
+          <input type="text" name="name" placeholder="你的真实姓名" required maxlength="50"/>
+        </div>
+        <div class="form-group">
+          <label>联系电话 <span class="required">*</span></label>
+          <input type="text" name="phone" placeholder="手机号码" required maxlength="20"/>
+        </div>
+        <div class="form-group">
+          <label>备注留言</label>
+          <textarea name="message" rows="3" placeholder="可选，补充说明" maxlength="500"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">提交报名</button>
+      </form>
+    </div>
   </div>
 
   <footer>

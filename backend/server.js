@@ -15,6 +15,7 @@ const userRoutes = require('./routes/users');
 const notificationRoutes = require('./routes/notifications');
 const searchRoutes = require('./routes/search');
 const uploadRoutes = require('./routes/upload');
+const jobRoutes = require('./routes/jobs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -57,6 +58,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/jobs', jobRoutes);
 
 // ============ 根路由重定向 ============
 

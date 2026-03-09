@@ -1,51 +1,199 @@
 import { showToast } from './ui.js';
 import { checkAuth } from './auth.js';
+import { getCurrentUser } from './api.js';
 import { bindMenuToggle } from './utils.js';
 
-// 教务在线入口地址（登录页）。所有功能均需登录后才能使用，
-// 因此卡片统一跳转到教务首页，由学生登录后自行导航。
 const JW_HOME = 'https://jw.cqupt.edu.cn';
+const API_BASE = '/api';
 
-// 功能模块列表：仅作展示 & 导航提示，点击后统一跳转教务首页。
-const JW_MODULES = [
-  { title: '课表查询', icon: '📅', desc: '查看个人课表' },
-  { title: '考试安排', icon: '📝', desc: '查看考试时间地点' },
-  { title: '成绩查询', icon: '📊', desc: '查询历年成绩' },
-  { title: '电子证明', icon: '📄', desc: '开具在读证明等' },
-  { title: '教室申请', icon: '🏫', desc: '申请空教室使用' },
-  { title: '劳动教育选岗', icon: '📚', desc: '选择劳动教育岗位' },
-  { title: '竞赛报名', icon: '🏃', desc: '报名学科竞赛' },
-  { title: '学业预警', icon: '📋', desc: '查看学业预警信息' },
-  { title: '转专业报名', icon: '📷', desc: '提交转专业申请' },
-  { title: '专业分流', icon: '📑', desc: '查看分流方案' }
-];
+function getToken() {
+  return localStorage.getItem('authToken');
+}
 
-function renderAcademicModules() {
-  const grid = document.getElementById('jw-grid');
+// ========== 教务在线 ==========
+function initAcademic() {
   const homeLink = document.getElementById('jw-home-link');
-  if (!grid || !homeLink) return;
+  if (homeLink) homeLink.href = JW_HOME;
+}
 
-  homeLink.href = JW_HOME;
+// ========== 兼职模块 ==========
+async function loadJobs() {
+  const list = document.getElementById('job-list');
+  if (!list) return;
 
-  grid.innerHTML = JW_MODULES.map(module => `
-    <a class="jw-card" href="${JW_HOME}" target="_blank" rel="noopener noreferrer" title="${module.desc}">
-      <span class="jw-card-icon">${module.icon}</span>
-      <span class="jw-card-title">${module.title}</span>
-      <span class="jw-card-desc">${module.desc}</span>
-    </a>
-  `).join('');
+  try {
+    const res = await fetch(`${API_BASE}/jobs`);
+    const data = await res.json();
+    const jobs = data.data?.jobs || [];
+    const currentUser = getCurrentUser();
 
-  grid.querySelectorAll('.jw-card').forEach(card => {
-    card.addEventListener('click', () => {
-      showToast('正在跳转教务系统，请登录后导航到对应功能', 'info');
+    if (jobs.length === 0) {
+      list.innerHTML = '<div class="empty-hint">暂无兼职信息，快来发布第一条吧！</div>';
+      return;
+    }
+
+    list.innerHTML = jobs.map(job => `
+      <div class="job-item">
+        <div class="job-item-top">
+          <h3 class="job-title">${escapeHtml(job.title)}</h3>
+          ${job.salary ? `<span class="job-salary">${escapeHtml(job.salary)}</span>` : ''}
+        </div>
+        <p class="job-desc">${escapeHtml(job.description)}</p>
+        <div class="job-meta">
+          ${job.location ? `<span>📍 ${escapeHtml(job.location)}</span>` : ''}
+          <span>👤 ${escapeHtml(job.publisher_name)}</span>
+          <span>📞 ${escapeHtml(job.contact)}</span>
+          <span>📅 ${new Date(job.created_at).toLocaleDateString()}</span>
+          <span>已报名 ${job.apply_count || 0} 人</span>
+        </div>
+        <div class="job-actions">
+          <button class="btn btn-sm btn-primary" onclick="openApplyModal(${job.id})">我要报名</button>
+          ${currentUser && currentUser.id === job.publisher_id ? `<button class="btn btn-sm btn-danger" onclick="deleteJob(${job.id})">删除</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    list.innerHTML = '<div class="empty-hint">加载失败，请稍后刷新</div>';
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// 打开报名弹窗
+window.openApplyModal = function(jobId) {
+  const user = getCurrentUser();
+  if (!user) {
+    showToast('请先登录', 'warning');
+    return;
+  }
+  const modal = document.getElementById('job-apply-modal');
+  modal.querySelector('input[name="jobId"]').value = jobId;
+  modal.style.display = 'flex';
+};
+
+// 删除兼职
+window.deleteJob = async function(jobId) {
+  if (!confirm('确定要删除这条兼职信息吗？')) return;
+  try {
+    const res = await fetch(`${API_BASE}/jobs/${jobId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
+    const data = await res.json();
+    if (data.success) {
+      showToast('删除成功', 'success');
+      loadJobs();
+    } else {
+      showToast(data.message || '删除失败', 'error');
+    }
+  } catch {
+    showToast('网络错误', 'error');
+  }
+};
+
+// 发布兼职表单
+function bindPublishForm() {
+  const form = document.getElementById('job-publish-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = getCurrentUser();
+    if (!user) {
+      showToast('请先登录', 'warning');
+      return;
+    }
+
+    const fd = new FormData(form);
+    const body = {
+      title: fd.get('title'),
+      description: fd.get('description'),
+      contact: fd.get('contact'),
+      salary: fd.get('salary'),
+      location: fd.get('location')
+    };
+
+    try {
+      const res = await fetch(`${API_BASE}/jobs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('发布成功！', 'success');
+        form.reset();
+        document.getElementById('job-publish-modal').style.display = 'none';
+        loadJobs();
+      } else {
+        showToast(data.message || '发布失败', 'error');
+      }
+    } catch {
+      showToast('网络错误', 'error');
+    }
   });
 }
+
+// 报名表单
+function bindApplyForm() {
+  const form = document.getElementById('job-apply-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const jobId = fd.get('jobId');
+    const body = {
+      name: fd.get('name'),
+      phone: fd.get('phone'),
+      message: fd.get('message')
+    };
+
+    try {
+      const res = await fetch(`${API_BASE}/jobs/${jobId}/apply`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('报名成功！', 'success');
+        form.reset();
+        document.getElementById('job-apply-modal').style.display = 'none';
+        loadJobs();
+      } else {
+        showToast(data.message || '报名失败', 'error');
+      }
+    } catch {
+      showToast('网络错误', 'error');
+    }
+  });
+}
+
+// 点击弹窗外部关闭
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.style.display = 'none';
+  });
+});
 
 function init() {
   bindMenuToggle();
   checkAuth();
-  renderAcademicModules();
+  initAcademic();
+  loadJobs();
+  bindPublishForm();
+  bindApplyForm();
 }
 
 init();

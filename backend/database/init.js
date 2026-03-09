@@ -248,6 +248,19 @@ function seedData() {
   // 更新帖子评论数
   db.run('UPDATE posts SET comment_count = 1 WHERE id = 1');
 
+  // 插入示例兼职信息
+  const sampleJobs = [
+    ['校园快递代取', '帮忙从菜鸟驿站取快递送到宿舍楼下，每单5元，多劳多得。工作时间灵活，适合课余时间做。', '微信: campus_express', '5元/单', '菜鸟驿站'],
+    ['周末传单派发', '协助学校周边商家发放宣传传单，工作轻松，日结工资。需要性格开朗、有责任心的同学。', '13800138000', '120元/天', '学校南门'],
+    ['食堂兼职服务员', '中午11:00-13:00在二食堂帮忙打饭、收餐盘，包午餐，适合中午没课的同学。', 'QQ: 123456789', '30元/次 + 包餐', '二食堂']
+  ];
+  for (const [title, description, contact, salary, location] of sampleJobs) {
+    db.run(
+      'INSERT INTO jobs (title, description, contact, salary, location, publisher_id) VALUES (?, ?, ?, ?, ?, ?)',
+      [title, description, contact, salary, location, 1]
+    );
+  }
+
   console.log('数据库初始化完成：已插入默认数据');
 }
 

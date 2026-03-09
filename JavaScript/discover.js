@@ -22,9 +22,17 @@ async function loadJobs() {
   if (!list) return;
 
   try {
-    const res = await fetch(`${API_BASE}/jobs`);
+    const res = await fetch(`${API_BASE}/jobs`, {
+      headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
     const data = await res.json();
     console.log('Jobs API response:', data);
+    if (!data.success) {
+      throw new Error(data.message || '获取兼职列表失败');
+    }
     const jobs = data.data?.jobs || [];
     const currentUser = getCurrentUser();
 

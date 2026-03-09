@@ -24,6 +24,7 @@ async function loadJobs() {
   try {
     const res = await fetch(`${API_BASE}/jobs`);
     const data = await res.json();
+    console.log('Jobs API response:', data);
     const jobs = data.data?.jobs || [];
     const currentUser = getCurrentUser();
 
@@ -53,6 +54,7 @@ async function loadJobs() {
       </div>
     `).join('');
   } catch (e) {
+    console.error('loadJobs error:', e);
     list.innerHTML = '<div class="empty-hint">加载失败，请稍后刷新</div>';
   }
 }

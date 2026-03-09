@@ -4,7 +4,7 @@ import { bindMenuToggle } from './utils.js';
 
 // 教务在线入口地址（登录页）。所有功能均需登录后才能使用，
 // 因此卡片统一跳转到教务首页，由学生登录后自行导航。
-const JW_HOME = 'https://jwzx.cqupt.edu.cn';
+const JW_HOME = 'https://jw.cqupt.edu.cn';
 
 // 功能模块列表：仅作展示 & 导航提示，点击后统一跳转教务首页。
 const JW_MODULES = [

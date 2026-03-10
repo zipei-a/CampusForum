@@ -1,4 +1,4 @@
-import { getPostDetail, createComment, getCurrentUser, deletePost, getCategoryName } from './api.js';
+import { getPostDetail, getComments, createComment, getCurrentUser, deletePost, getCategoryName } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 
@@ -7,6 +7,44 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+// 加载评论列表
+async function loadComments(postId) {
+  const listEl = document.getElementById('comments-list');
+  try {
+    const data = await getComments(postId);
+    const comments = data.comments || [];
+    if (comments.length === 0) {
+      listEl.innerHTML = '<div class="empty-hint" style="color:#999;text-align:center;padding:16px 0;">暂无评论，快来抢沙发吧~</div>';
+      return;
+    }
+    listEl.innerHTML = comments.map(c => `
+      <div class="comment-item" style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+        <div class="comment-meta" style="font-size: 13px; color: #888;">
+          <a href="profile.html?username=${encodeURIComponent(c.author.username)}" style="color: #4CAF50; text-decoration: none; font-weight: 500;">${escapeHtml(c.author.username)}</a>
+          <span style="margin-left: 8px;">${c.createdAt}</span>
+        </div>
+        <div style="margin-top: 8px; line-height: 1.6;">${escapeHtml(c.content)}</div>
+        ${c.replies && c.replies.length > 0 ? `
+          <div style="margin-top: 8px; padding-left: 16px; border-left: 2px solid #e8e8e8;">
+            ${c.replies.map(r => `
+              <div style="padding: 8px 0; font-size: 13px;">
+                <a href="profile.html?username=${encodeURIComponent(r.author.username)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(r.author.username)}</a>
+                <span style="color: #999;"> 回复 </span>
+                <a href="profile.html?username=${encodeURIComponent(r.replyTo.username)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(r.replyTo.username)}</a>
+                <span style="color: #999; margin-left: 8px;">${r.createdAt}</span>
+                <div style="margin-top: 4px;">${escapeHtml(r.content)}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `).join('');
+  } catch (e) {
+    console.error('loadComments error:', e);
+    listEl.innerHTML = '<div class="empty-hint" style="color:#999;text-align:center;padding:16px 0;">评论加载失败</div>';
+  }
 }
 
 async function loadPost() {
@@ -56,14 +94,8 @@ async function loadPost() {
       </div>
     `;
 
-    const comments = post.comments || [];
-    const listEl = document.getElementById('comments-list');
-    listEl.innerHTML = comments.map(c => `
-      <div class="comment-item">
-        <div class="comment-meta"><a href="profile.html?username=${encodeURIComponent(c.author)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(c.author)}</a> | ${c.createdAt}</div>
-        <div style="margin-top: 8px;">${escapeHtml(c.content)}</div>
-      </div>
-    `).join('');
+    // 从独立接口加载评论
+    await loadComments(id);
 
     document.getElementById('submit-comment').onclick = async () => {
       const content = document.getElementById('comment-input').value.trim();
@@ -79,7 +111,8 @@ async function loadPost() {
       
       await createComment(id, content);
       showToast('评论成功', 'success');
-      location.reload();
+      document.getElementById('comment-input').value = '';
+      await loadComments(id);
     };
   } catch (e) {
     showToast('加载失败', 'error');

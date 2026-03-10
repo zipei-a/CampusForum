@@ -153,6 +153,12 @@ export async function getPostDetail(id) {
   };
 }
 
+// 获取评论列表
+export async function getComments(postId, page = 1, limit = 20) {
+  const data = await request(`/posts/${postId}/comments?page=${page}&limit=${limit}`);
+  return data.data;
+}
+
 // 发布评论
 export async function createComment(postId, content) {
   const data = await request(`/posts/${postId}/comments`, {

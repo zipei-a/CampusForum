@@ -12,9 +12,12 @@ function escapeHtml(str) {
 // 加载评论列表
 async function loadComments(postId) {
   const listEl = document.getElementById('comments-list');
+  if (!listEl) return;
+
   try {
     const data = await getComments(postId);
-    const comments = data.comments || [];
+    console.log('Comments API response:', data);
+    const comments = (data && data.comments) || [];
     if (comments.length === 0) {
       listEl.innerHTML = '<div class="empty-hint" style="color:#999;text-align:center;padding:16px 0;">暂无评论，快来抢沙发吧~</div>';
       return;
@@ -22,19 +25,19 @@ async function loadComments(postId) {
     listEl.innerHTML = comments.map(c => `
       <div class="comment-item" style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
         <div class="comment-meta" style="font-size: 13px; color: #888;">
-          <a href="profile.html?username=${encodeURIComponent(c.author.username)}" style="color: #4CAF50; text-decoration: none; font-weight: 500;">${escapeHtml(c.author.username)}</a>
-          <span style="margin-left: 8px;">${c.createdAt}</span>
+          <a href="profile.html?username=${encodeURIComponent(c.author?.username || '匿名')}" style="color: #4CAF50; text-decoration: none; font-weight: 500;">${escapeHtml(c.author?.username || '匿名')}</a>
+          <span style="margin-left: 8px;">${c.createdAt || ''}</span>
         </div>
-        <div style="margin-top: 8px; line-height: 1.6;">${escapeHtml(c.content)}</div>
+        <div style="margin-top: 8px; line-height: 1.6;">${escapeHtml(c.content || '')}</div>
         ${c.replies && c.replies.length > 0 ? `
           <div style="margin-top: 8px; padding-left: 16px; border-left: 2px solid #e8e8e8;">
             ${c.replies.map(r => `
               <div style="padding: 8px 0; font-size: 13px;">
-                <a href="profile.html?username=${encodeURIComponent(r.author.username)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(r.author.username)}</a>
+                <a href="profile.html?username=${encodeURIComponent(r.author?.username || '匿名')}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(r.author?.username || '匿名')}</a>
                 <span style="color: #999;"> 回复 </span>
-                <a href="profile.html?username=${encodeURIComponent(r.replyTo.username)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(r.replyTo.username)}</a>
-                <span style="color: #999; margin-left: 8px;">${r.createdAt}</span>
-                <div style="margin-top: 4px;">${escapeHtml(r.content)}</div>
+                <a href="profile.html?username=${encodeURIComponent(r.replyTo?.username || '匿名')}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(r.replyTo?.username || '匿名')}</a>
+                <span style="color: #999; margin-left: 8px;">${r.createdAt || ''}</span>
+                <div style="margin-top: 4px;">${escapeHtml(r.content || '')}</div>
               </div>
             `).join('')}
           </div>
@@ -43,7 +46,7 @@ async function loadComments(postId) {
     `).join('');
   } catch (e) {
     console.error('loadComments error:', e);
-    listEl.innerHTML = '<div class="empty-hint" style="color:#999;text-align:center;padding:16px 0;">评论加载失败</div>';
+    listEl.innerHTML = '<div class="empty-hint" style="color:#999;text-align:center;padding:16px 0;">评论加载失败，请刷新重试</div>';
   }
 }
 

@@ -244,72 +244,89 @@ router.post('/:id/favorite', authRequired, (req, res) => {
 
 // GET /api/posts/:postId/comments - 获取帖子评论
 router.get('/:postId/comments', authOptional, (req, res) => {
-  const { page = 1, limit = 20 } = req.query;
-  const offset = (parseInt(page) - 1) * parseInt(limit);
-  const postId = req.params.postId;
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 20;
+    const offset = (pageNum - 1) * limitNum;
+    const postId = parseInt(req.params.postId);
 
-  const countResult = get('SELECT COUNT(*) as count FROM comments WHERE post_id = ?', [postId]);
-  const total = countResult ? countResult.count : 0;
+    if (!postId || isNaN(postId)) {
+      return res.status(400).json({ code: 400, message: '无效的帖子ID' });
+    }
 
-  const comments = all(`
-    SELECT c.*, u.username as author_name, u.avatar as author_avatar
-    FROM comments c
-    JOIN users u ON c.author_id = u.id
-    WHERE c.post_id = ? AND (c.reply_to IS NULL OR c.reply_to = 0 OR c.reply_to = '')
-    ORDER BY c.created_at DESC
-    LIMIT ? OFFSET ?
-  `, [postId, parseInt(limit), offset]);
+    const countResult = get('SELECT COUNT(*) as count FROM comments WHERE post_id = ?', [postId]);
+    const total = countResult ? countResult.count : 0;
 
-  const formattedComments = comments.map(c => {
-    const replies = all(`
-      SELECT c2.*, u.username as author_name, u.avatar as author_avatar
-      FROM comments c2
-      JOIN users u ON c2.author_id = u.id
-      WHERE c2.reply_to = ?
-      ORDER BY c2.created_at ASC
-    `, [c.id]);
+    // 查询顶层评论（reply_to 为 NULL 或 0 的都算顶层评论）
+    const comments = all(`
+      SELECT c.*, u.username as author_name, u.avatar as author_avatar
+      FROM comments c
+      LEFT JOIN users u ON c.author_id = u.id
+      WHERE c.post_id = ? AND (c.reply_to IS NULL OR c.reply_to = 0)
+      ORDER BY c.created_at DESC
+      LIMIT ? OFFSET ?
+    `, [postId, limitNum, offset]);
 
-    return {
-      id: c.id,
-      content: c.content,
-      author: { id: c.author_id, username: c.author_name, avatar: c.author_avatar },
-      likeCount: c.like_count,
-      isLiked: req.user ? !!get('SELECT 1 as v FROM likes WHERE user_id = ? AND target_type = ? AND target_id = ?', [req.user.id, 'comment', c.id]) : false,
-      replies: replies.map(r => ({
-        id: r.id,
-        content: r.content,
-        author: { id: r.author_id, username: r.author_name, avatar: r.author_avatar },
-        replyTo: { id: c.author_id, username: c.author_name },
-        createdAt: r.created_at
-      })),
-      createdAt: c.created_at
-    };
-  });
+    const formattedComments = comments.map(c => {
+      const replies = all(`
+        SELECT c2.*, u.username as author_name, u.avatar as author_avatar
+        FROM comments c2
+        LEFT JOIN users u ON c2.author_id = u.id
+        WHERE c2.reply_to = ?
+        ORDER BY c2.created_at ASC
+      `, [c.id]);
 
-  res.json({
-    code: 200,
-    data: { comments: formattedComments, pagination: { page: parseInt(page), limit: parseInt(limit), total } }
-  });
+      return {
+        id: c.id,
+        content: c.content,
+        author: { id: c.author_id, username: c.author_name || '未知用户', avatar: c.author_avatar || '' },
+        likeCount: c.like_count || 0,
+        isLiked: req.user ? !!get('SELECT 1 as v FROM likes WHERE user_id = ? AND target_type = ? AND target_id = ?', [req.user.id, 'comment', c.id]) : false,
+        replies: replies.map(r => ({
+          id: r.id,
+          content: r.content,
+          author: { id: r.author_id, username: r.author_name || '未知用户', avatar: r.author_avatar || '' },
+          replyTo: { id: c.author_id, username: c.author_name || '未知用户' },
+          createdAt: r.created_at
+        })),
+        createdAt: c.created_at
+      };
+    });
+
+    res.json({
+      code: 200,
+      data: { comments: formattedComments, pagination: { page: pageNum, limit: limitNum, total } }
+    });
+  } catch (err) {
+    console.error('获取评论失败:', err);
+    res.status(500).json({ code: 500, message: '获取评论失败' });
+  }
 });
 
 // POST /api/posts/:postId/comments - 创建评论
 router.post('/:postId/comments', authRequired, (req, res) => {
-  const { content, replyTo } = req.body;
-  const postId = req.params.postId;
+  try {
+    const { content, replyTo } = req.body;
+    const postId = parseInt(req.params.postId);
 
-  if (!content || !content.trim()) {
-    return res.status(400).json({ code: 400, message: '评论内容不能为空' });
-  }
+    if (!postId || isNaN(postId)) {
+      return res.status(400).json({ code: 400, message: '无效的帖子ID' });
+    }
 
-  const post = get('SELECT id, author_id FROM posts WHERE id = ?', [postId]);
-  if (!post) return res.status(404).json({ code: 404, message: '帖子不存在' });
+    if (!content || !content.trim()) {
+      return res.status(400).json({ code: 400, message: '评论内容不能为空' });
+    }
 
-  const result = run(
-    'INSERT INTO comments (content, post_id, author_id, reply_to) VALUES (?, ?, ?, ?)',
-    [content.trim(), postId, req.user.id, replyTo || null]
-  );
+    const post = get('SELECT id, author_id FROM posts WHERE id = ?', [postId]);
+    if (!post) return res.status(404).json({ code: 404, message: '帖子不存在' });
 
-  run('UPDATE posts SET comment_count = comment_count + 1 WHERE id = ?', [postId]);
+    const result = run(
+      'INSERT INTO comments (content, post_id, author_id, reply_to) VALUES (?, ?, ?, ?)',
+      [content.trim(), postId, req.user.id, replyTo ? parseInt(replyTo) : null]
+    );
+
+    run('UPDATE posts SET comment_count = comment_count + 1 WHERE id = ?', [postId]);
 
   // 创建通知
   if (post.author_id !== req.user.id) {
@@ -319,11 +336,15 @@ router.post('/:postId/comments', authRequired, (req, res) => {
     );
   }
 
-  res.status(201).json({
-    code: 201,
-    message: '评论成功',
-    data: { id: result.lastInsertRowid, content: content.trim(), author: req.user.username, createdAt: new Date().toISOString() }
-  });
+    res.status(201).json({
+      code: 201,
+      message: '评论成功',
+      data: { id: result.lastInsertRowid, content: content.trim(), author: req.user.username, createdAt: new Date().toISOString() }
+    });
+  } catch (err) {
+    console.error('创建评论失败:', err);
+    res.status(500).json({ code: 500, message: '创建评论失败' });
+  }
 });
 
 module.exports = router;

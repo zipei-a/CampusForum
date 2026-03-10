@@ -255,7 +255,7 @@ router.get('/:postId/comments', authOptional, (req, res) => {
     SELECT c.*, u.username as author_name, u.avatar as author_avatar
     FROM comments c
     JOIN users u ON c.author_id = u.id
-    WHERE c.post_id = ? AND c.reply_to IS NULL
+    WHERE c.post_id = ? AND (c.reply_to IS NULL OR c.reply_to = 0 OR c.reply_to = '')
     ORDER BY c.created_at DESC
     LIMIT ? OFFSET ?
   `, [postId, parseInt(limit), offset]);

@@ -1,6 +1,6 @@
 import { showToast } from './ui.js';
 import { checkAuth } from './auth.js';
-import { getCurrentUser } from './api.js';
+import { getCurrentUser, getUnreadNotificationCount } from './api.js';
 import { bindMenuToggle } from './utils.js';
 
 const JW_HOME = 'https://jw.cqupt.edu.cn';
@@ -197,6 +197,23 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 
+async function updateNotificationBadge() {
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
+  try {
+    const count = await getUnreadNotificationCount();
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  } catch (e) { /* ignore */ }
+}
+
 function init() {
   bindMenuToggle();
   checkAuth();
@@ -204,6 +221,7 @@ function init() {
   loadJobs();
   bindPublishForm();
   bindApplyForm();
+  updateNotificationBadge();
 }
 
 init();

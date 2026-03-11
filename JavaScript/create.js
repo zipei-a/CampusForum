@@ -1,4 +1,4 @@
-import { createPost, getCategories, getCurrentUser, createOrGetTags } from './api.js';
+import { createPost, getCategories, getCurrentUser, createOrGetTags, getUnreadNotificationCount } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { bindMenuToggle } from './utils.js';
@@ -35,6 +35,22 @@ async function loadCategories() {
   }
 }
 
+async function updateNotificationBadge() {
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
+  try {
+    const count = await getUnreadNotificationCount();
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  } catch (e) { /* ignore */ }
+}
 
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -44,6 +60,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   checkAuth();
   // 加载分类列表
   await loadCategories();
+  // 更新通知徽章
+  updateNotificationBadge();
 
   // ============ 图片上传 ============
   let uploadedImageUrl = null;

@@ -1,4 +1,4 @@
-import { getPostDetail, getComments, createComment, getCurrentUser, deletePost, getCategoryName } from './api.js';
+import { getPostDetail, getComments, createComment, getCurrentUser, deletePost, getCategoryName, getUnreadNotificationCount } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 
@@ -161,11 +161,29 @@ window.deletePostById = deletePostById;
 async function init() {
   checkAuth();
   await loadPost();
+  updateNotificationBadge();
   // 支持 #comments-section 锚点自动滚动到评论区
   if (window.location.hash === '#comments-section') {
     const el = document.getElementById('comments-section');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   }
+}
+
+async function updateNotificationBadge() {
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
+  try {
+    const count = await getUnreadNotificationCount();
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  } catch (e) { /* ignore */ }
 }
 
 init();

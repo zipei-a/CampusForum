@@ -355,3 +355,35 @@ export function isPostLiked(postId) {
   // 点赞状态改由后端管理，默认返回 false
   return false;
 }
+
+// ============ 通知接口 ============
+
+// 获取通知列表
+export async function getNotifications(options = {}) {
+  const params = new URLSearchParams();
+  if (options.type) params.set('type', options.type);
+  if (options.read !== undefined) params.set('read', options.read);
+  if (options.page) params.set('page', options.page);
+  if (options.limit) params.set('limit', options.limit);
+  const query = params.toString();
+  const data = await request(`/notifications${query ? '?' + query : ''}`);
+  return data.data;
+}
+
+// 获取未读通知数量
+export async function getUnreadNotificationCount() {
+  const data = await request('/notifications/unread-count');
+  return data.data.count;
+}
+
+// 标记单条通知已读
+export async function markNotificationRead(id) {
+  const data = await request(`/notifications/${id}/read`, { method: 'PUT' });
+  return data;
+}
+
+// 标记全部通知已读
+export async function markAllNotificationsRead() {
+  const data = await request('/notifications/read-all', { method: 'PUT' });
+  return data;
+}

@@ -328,11 +328,15 @@ router.post('/:postId/comments', authRequired, (req, res) => {
 
     run('UPDATE posts SET comment_count = comment_count + 1 WHERE id = ?', [postId]);
 
-  // 创建通知
+  // 创建通知：包含帖子标题和评论内容
   if (post.author_id !== req.user.id) {
+    const postInfo = get('SELECT title FROM posts WHERE id = ?', [postId]);
+    const postTitle = postInfo ? postInfo.title : '未知帖子';
+    const notifTitle = `${req.user.username} 评论了你的帖子`;
+    const notifContent = `在《${postTitle}》中评论：${content.trim().substring(0, 100)}`;
     run(
-      "INSERT INTO notifications (user_id, type, title, content, data) VALUES (?, 'comment', '新评论', ?, ?)",
-      [post.author_id, `${req.user.username} 回复了你的帖子`, JSON.stringify({ postId: parseInt(postId), commentId: result.lastInsertRowid })]
+      "INSERT INTO notifications (user_id, type, title, content, data) VALUES (?, 'comment', ?, ?, ?)",
+      [post.author_id, notifTitle, notifContent, JSON.stringify({ postId: parseInt(postId), commentId: result.lastInsertRowid, postTitle })]
     );
   }
 

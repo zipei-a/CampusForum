@@ -1,140 +1,112 @@
-import { getCurrentUser, getPosts } from './api.js';
+import { getCurrentUser, getNotifications as fetchNotifications, getUnreadNotificationCount, markNotificationRead, markAllNotificationsRead } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { bindMenuToggle, formatTime } from './utils.js';
 
-function getNotifications() {
-  const data = JSON.parse(localStorage.getItem('campusForumData') || '{}');
-  return data.notifications || [];
-}
-
-function saveNotifications(notifications) {
-  const data = JSON.parse(localStorage.getItem('campusForumData') || '{}');
-  data.notifications = notifications;
-  localStorage.setItem('campusForumData', JSON.stringify(data));
-}
-
-export function createNotification(userId, type, title, content, data = {}) {
-  const notifications = getNotifications();
-  const notification = {
-    id: Date.now(),
-    userId,
-    type,
-    title,
-    content,
-    data,
-    isRead: false,
-    createdAt: new Date().toISOString()
-  };
-  notifications.unshift(notification);
-  saveNotifications(notifications);
-  return notification;
-}
-
-export function getUnreadCount(userId) {
-  const notifications = getNotifications();
-  return notifications.filter(n => n.userId === userId && !n.isRead).length;
+export async function getUnreadCount() {
+  try {
+    return await getUnreadNotificationCount();
+  } catch {
+    return 0;
+  }
 }
 
 async function loadNotifications() {
   const currentUser = getCurrentUser();
   if (!currentUser) return;
 
-  const notifications = getNotifications().filter(n => n.userId === currentUser.id);
-  
-  const container = document.getElementById('notifications');
-  
-  if (notifications.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state" style="padding: 40px 20px;">
-        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        <p class="empty-state-text">暂无系统通知</p>
-      </div>
-    `;
-    return;
-  }
+  try {
+    const result = await fetchNotifications({ limit: 50 });
+    const notifications = result.notifications || [];
+    
+    const container = document.getElementById('notifications');
+    
+    if (notifications.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state" style="padding: 40px 20px;">
+          <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <p class="empty-state-text">暂无系统通知</p>
+        </div>
+      `;
+      return;
+    }
 
-  container.innerHTML = notifications.map(notification => `
-    <div class="notification-item ${notification.isRead ? '' : 'unread'}" data-id="${notification.id}">
-      <div class="notification-icon ${notification.type}">
-        ${getNotificationIcon(notification.type)}
+    container.innerHTML = notifications.map(notification => `
+      <div class="notification-item ${notification.isRead ? '' : 'unread'}" data-id="${notification.id}"${notification.data && notification.data.postId ? ` onclick="location.href='detail.html?id=${notification.data.postId}'"` : ''} style="cursor: pointer;">
+        <div class="notification-icon ${notification.type}">
+          ${getNotificationIcon(notification.type)}
+        </div>
+        <div class="notification-content">
+          <div class="notification-title">${notification.title}</div>
+          <div class="notification-text">${notification.content}</div>
+          <div class="notification-time">${formatTime(notification.createdAt)}</div>
+        </div>
+        ${!notification.isRead ? `<button class="btn btn-sm btn-outline mark-read" data-id="${notification.id}">标为已读</button>` : ''}
       </div>
-      <div class="notification-content">
-        <div class="notification-title">${notification.title}</div>
-        <div class="notification-text">${notification.content}</div>
-        <div class="notification-time">${formatTime(notification.createdAt)}</div>
-      </div>
-      ${!notification.isRead ? `<button class="btn btn-sm btn-outline mark-read" data-id="${notification.id}">标为已读</button>` : ''}
-    </div>
-  `).join('');
+    `).join('');
 
-  document.querySelectorAll('.mark-read').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      markAsRead(parseInt(btn.dataset.id));
+    document.querySelectorAll('.mark-read').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        markAsRead(parseInt(btn.dataset.id));
+      });
     });
-  });
+  } catch (e) {
+    console.error('加载通知失败:', e);
+  }
 }
 
 async function loadCommentReplies() {
   const currentUser = getCurrentUser();
   if (!currentUser) return;
 
-  const posts = await getPosts();
-  const userPosts = posts.filter(p => p.author === currentUser.username);
-  
-  const allComments = [];
-  userPosts.forEach(post => {
-    if (post.comments && post.comments.length > 0) {
-      post.comments.forEach(comment => {
-        if (comment.author !== currentUser.username) {
-          allComments.push({
-            ...comment,
-            postId: post.id,
-            postTitle: post.title
-          });
-        }
-      });
+  try {
+    const result = await fetchNotifications({ type: 'comment', limit: 50 });
+    const commentNotifications = result.notifications || [];
+    
+    const container = document.getElementById('comment-replies');
+    
+    if (commentNotifications.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state" style="padding: 40px 20px;">
+          <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <p class="empty-state-text">暂无评论回复</p>
+        </div>
+      `;
+      return;
     }
-  });
 
-  allComments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  
-  const container = document.getElementById('comment-replies');
-  
-  if (allComments.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state" style="padding: 40px 20px;">
-        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-        <p class="empty-state-text">暂无评论回复</p>
+    container.innerHTML = commentNotifications.map(n => `
+      <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="location.href='detail.html?id=${n.data.postId}'" style="cursor: pointer;">
+        <div class="notification-icon comment">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div class="notification-content">
+          <div class="notification-title">${n.title}</div>
+          <div class="notification-text">${n.content}</div>
+          <div class="notification-time">${formatTime(n.createdAt)}</div>
+        </div>
+        ${!n.isRead ? `<button class="btn btn-sm btn-outline mark-read" data-id="${n.id}" onclick="event.stopPropagation()">标为已读</button>` : ''}
       </div>
-    `;
-    return;
+    `).join('');
+
+    // 绑定"标为已读"按钮（评论回复区域）
+    container.querySelectorAll('.mark-read').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        markAsRead(parseInt(btn.dataset.id));
+      });
+    });
+  } catch (e) {
+    console.error('加载评论回复失败:', e);
   }
-
-  container.innerHTML = allComments.slice(0, 20).map(comment => `
-    <div class="notification-item" onclick="location.href='detail.html?id=${comment.postId}'">
-      <div class="notification-icon comment">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-      </div>
-      <div class="notification-content">
-        <div class="notification-title">
-          <strong>${comment.author}</strong> 评论了你的帖子
-        </div>
-        <div class="notification-text">
-          <span style="color: #4CAF50;">《${comment.postTitle}》</span>：${comment.content}
-        </div>
-        <div class="notification-time">${comment.createdAt}</div>
-      </div>
-    </div>
-  `).join('');
 }
 
 function getNotificationIcon(type) {
@@ -157,52 +129,55 @@ function getNotificationIcon(type) {
   }
 }
 
-function markAsRead(notificationId) {
-  const notifications = getNotifications();
-  const notification = notifications.find(n => n.id === notificationId);
-  if (notification) {
-    notification.isRead = true;
-    saveNotifications(notifications);
-    loadNotifications();
+async function markAsRead(notificationId) {
+  try {
+    await markNotificationRead(notificationId);
+    await loadNotifications();
+    await loadCommentReplies();
     updateNotificationBadge();
     showToast('已标记为已读', 'success');
+  } catch (e) {
+    showToast('操作失败', 'error');
   }
 }
 
-function markAllAsRead() {
+async function markAllAsRead() {
   const currentUser = getCurrentUser();
   if (!currentUser) return;
 
-  const notifications = getNotifications();
-  notifications.forEach(n => {
-    if (n.userId === currentUser.id) {
-      n.isRead = true;
-    }
-  });
-  saveNotifications(notifications);
-  loadNotifications();
-  updateNotificationBadge();
-  showToast('已全部标记为已读', 'success');
-}
-
-function updateNotificationBadge() {
-  const currentUser = getCurrentUser();
-  if (!currentUser) return;
-
-  const unreadCount = getUnreadCount(currentUser.id);
-  const badge = document.getElementById('notification-badge');
-  
-  if (badge) {
-    if (unreadCount > 0) {
-      badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
-      badge.style.display = 'inline-flex';
-    } else {
-      badge.style.display = 'none';
-    }
+  try {
+    await markAllNotificationsRead();
+    await loadNotifications();
+    await loadCommentReplies();
+    updateNotificationBadge();
+    showToast('已全部标记为已读', 'success');
+  } catch (e) {
+    showToast('操作失败', 'error');
   }
 }
 
-function init() {
+async function updateNotificationBadge() {
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
+
+  try {
+    const unreadCount = await getUnreadNotificationCount();
+    const badge = document.getElementById('notification-badge');
+    
+    if (badge) {
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  } catch (e) {
+    console.error('更新通知徽章失败:', e);
+  }
+}
+
+async function init() {
   // 绑定汉堡菜单事件
   bindMenuToggle();
   checkAuth();
@@ -218,9 +193,9 @@ function init() {
 
   showLoading();
   try {
-    loadNotifications();
-    loadCommentReplies();
-    updateNotificationBadge();
+    await loadNotifications();
+    await loadCommentReplies();
+    await updateNotificationBadge();
   } catch (e) {
     showToast('加载消息失败', 'error');
   } finally {

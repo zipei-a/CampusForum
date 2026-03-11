@@ -1,7 +1,6 @@
-import { getPosts, deletePost, getCurrentUser, getCategories, getCategoryName, getHotTags, getPostsByTag, searchPosts, toggleLike, isPostLiked, toggleFavorite, isPostFavorited } from './api.js';
+import { getPosts, deletePost, getCurrentUser, getCategories, getCategoryName, getHotTags, getPostsByTag, searchPosts, toggleLike, isPostLiked, toggleFavorite, isPostFavorited, getUnreadNotificationCount } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
-import { getUnreadCount } from './messages.js';
 import { cache } from './cache.js';
 import { Pagination } from './pagination.js';
 import { bindMenuToggle } from './utils.js';
@@ -870,19 +869,23 @@ function bindNavbarCategoryEvents() {
 }
 
 // 更新通知徽章
-function updateNotificationBadge() {
+async function updateNotificationBadge() {
   const currentUser = getCurrentUser();
   if (!currentUser) return;
 
-  const unreadCount = getUnreadCount(currentUser.id);
-  const badge = document.getElementById('notification-badge');
-  
-  if (badge) {
-    if (unreadCount > 0) {
-      badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
-      badge.style.display = 'inline-flex';
-    } else {
-      badge.style.display = 'none';
+  try {
+    const unreadCount = await getUnreadNotificationCount();
+    const badge = document.getElementById('notification-badge');
+    
+    if (badge) {
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
     }
+  } catch (e) {
+    console.error('更新通知徽章失败:', e);
   }
 }

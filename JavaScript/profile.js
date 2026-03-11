@@ -1,4 +1,4 @@
-import { getCurrentUser, getPosts, getUserFavorites, logout, getUserProfileByUsername, getUserPosts, updateUserProfile, uploadImage } from './api.js';
+import { getCurrentUser, getPosts, getUserFavorites, logout, getUserProfileByUsername, getUserPosts, updateUserProfile, uploadImage, getUnreadNotificationCount } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { bindMenuToggle } from './utils.js';
@@ -365,10 +365,28 @@ function bindTabEvents() {
 
 
 
+async function updateNotificationBadge() {
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
+  try {
+    const count = await getUnreadNotificationCount();
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  } catch (e) { /* ignore */ }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   // 绑定汉堡菜单事件
   bindMenuToggle();
   checkAuth();
   await loadProfile();
   bindTabEvents();
+  updateNotificationBadge();
 });

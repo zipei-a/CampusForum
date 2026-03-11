@@ -567,12 +567,13 @@ function bindPostTabs() {
       if (!posts) return;
       
       let displayPosts;
-      if (tabType === 'hot') {
-        // 最新回复 - 按评论数排序
-        displayPosts = [...posts].sort((a, b) => (b.comments?.length || 0) - (a.comments?.length || 0)).slice(0, 10);
-      } else if (tabType === 'essence') {
-        // 热门推荐 - 按点赞数排序
-        displayPosts = [...posts].sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0)).slice(0, 10);
+      if (tabType === 'essence') {
+        // 热门推荐 - 评论数*2 + 点赞数加权排序
+        displayPosts = [...posts].sort((a, b) => {
+          const scoreA = (a.commentCount || 0) * 2 + (a.likeCount || 0);
+          const scoreB = (b.commentCount || 0) * 2 + (b.likeCount || 0);
+          return scoreB - scoreA;
+        }).slice(0, 10);
       } else {
         // 最新发帖
         displayPosts = posts.slice(0, 10);
@@ -580,10 +581,12 @@ function bindPostTabs() {
       
       container.innerHTML = displayPosts.map(post => {
         const categoryName = getCategoryName(post.categoryId);
+        const isEssence = tabType === 'essence';
         return `
           <div class="forum-post-item">
             <span class="category-tag">【${categoryName}】</span>
             <a class="post-link" href="detail.html?id=${post.id}">${post.title}</a>
+            ${isEssence ? `<span class="post-hot-stats">🔥${(post.commentCount || 0) * 2 + (post.likeCount || 0)}</span>` : ''}
           </div>
         `;
       }).join('');

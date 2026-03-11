@@ -115,6 +115,12 @@ async function loadPost() {
       await createComment(id, content);
       showToast('评论成功', 'success');
       document.getElementById('comment-input').value = '';
+      // 更新评论计数显示
+      const commentCountEl = document.querySelector('.post-stats .stat-item:last-child');
+      if (commentCountEl) {
+        const currentCount = parseInt(commentCountEl.textContent.match(/\d+/)?.[0] || '0');
+        commentCountEl.innerHTML = commentCountEl.innerHTML.replace(/\d+(\s*评论)/, (currentCount + 1) + '$1');
+      }
       await loadComments(id);
     };
   } catch (e) {

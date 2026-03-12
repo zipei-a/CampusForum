@@ -91,7 +91,7 @@ router.delete('/:id', authRequired, (req, res) => {
     if (!job) {
       return res.status(404).json({ code: 404, message: '兼职不存在' });
     }
-    if (job.publisher_id !== req.user.id) {
+    if (job.publisher_id !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ code: 403, message: '只能删除自己发布的兼职' });
     }
 

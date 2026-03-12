@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>校园论坛 - 后台管理</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .admin-header h1 {
+      font-size: 24px;
+      color: var(--text-color);
+    }
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .stat-card .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    .stat-card .stat-label {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-top: 6px;
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+    .admin-tab {
+      padding: 10px 24px;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--text-light);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .admin-tab:hover {
+      color: var(--primary-color);
+    }
+    .admin-tab.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+      font-weight: 600;
+    }
+    .admin-panel {
+      display: none;
+    }
+    .admin-panel.active {
+      display: block;
+    }
+    .admin-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .admin-search {
+      display: flex;
+      gap: 8px;
+    }
+    .admin-search input {
+      padding: 8px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      font-size: 14px;
+      width: 260px;
+      outline: none;
+    }
+    .admin-search input:focus {
+      border-color: var(--primary-color);
+    }
+    .admin-search button {
+      padding: 8px 18px;
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .admin-table th,
+    .admin-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+    .admin-table th {
+      background: var(--bg-color);
+      font-weight: 600;
+      color: var(--text-light);
+      white-space: nowrap;
+    }
+    .admin-table td {
+      color: var(--text-color);
+    }
+    .admin-table tr:hover td {
+      background: var(--bg-color);
+    }
+    .admin-table .title-cell {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .admin-table .content-cell {
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .btn-delete {
+      padding: 5px 14px;
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .btn-delete:hover {
+      background: #c0392b;
+    }
+    .admin-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 16px 0;
+    }
+    .admin-pagination button {
+      padding: 6px 16px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .admin-pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .admin-pagination button:not(:disabled):hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    .admin-pagination .page-info {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    .empty-tip {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+      font-size: 15px;
+    }
+    .admin-back {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .admin-back:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">🎓 校园论坛</div>
+    <nav class="menu">
+      <a href="index.html">首页</a>
+      <a href="admin.html" class="active">后台管理</a>
+    </nav>
+    <div class="user" id="user-info"></div>
+    <div class="user-avatar" id="user-avatar" style="display: none;" title="个人中心"></div>
+  </header>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>📊 后台管理中心</h1>
+      <a href="index.html" class="admin-back">← 返回首页</a>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="admin-stats">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-users">-</div>
+        <div class="stat-label">注册用户</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-posts">-</div>
+        <div class="stat-label">帖子总数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-comments">-</div>
+        <div class="stat-label">评论总数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-jobs">-</div>
+        <div class="stat-label">兼职信息</div>
+      </div>
+    </div>
+
+    <!-- Tab 切换 -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="posts">帖子管理</button>
+      <button class="admin-tab" data-tab="comments">评论管理</button>
+      <button class="admin-tab" data-tab="jobs">兼职管理</button>
+    </div>
+
+    <!-- 帖子管理面板 -->
+    <div class="admin-panel active" id="panel-posts">
+      <div class="admin-toolbar">
+        <div class="admin-search">
+          <input type="text" id="search-posts" placeholder="搜索帖子标题或内容..." />
+          <button onclick="searchPosts()">搜索</button>
+        </div>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>标题</th>
+            <th>作者</th>
+            <th>分类</th>
+            <th>浏览</th>
+            <th>点赞</th>
+            <th>评论</th>
+            <th>发布时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="posts-tbody"></tbody>
+      </table>
+      <div class="admin-pagination" id="posts-pagination"></div>
+    </div>
+
+    <!-- 评论管理面板 -->
+    <div class="admin-panel" id="panel-comments">
+      <div class="admin-toolbar">
+        <div class="admin-search">
+          <input type="text" id="search-comments" placeholder="搜索评论内容..." />
+          <button onclick="searchComments()">搜索</button>
+        </div>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>评论内容</th>
+            <th>评论者</th>
+            <th>所属帖子</th>
+            <th>点赞</th>
+            <th>评论时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="comments-tbody"></tbody>
+      </table>
+      <div class="admin-pagination" id="comments-pagination"></div>
+    </div>
+
+    <!-- 兼职管理面板 -->
+    <div class="admin-panel" id="panel-jobs">
+      <div class="admin-toolbar">
+        <div class="admin-search">
+          <input type="text" id="search-jobs" placeholder="搜索兼职标题或描述..." />
+          <button onclick="searchJobs()">搜索</button>
+        </div>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>标题</th>
+            <th>发布者</th>
+            <th>薪资</th>
+            <th>地点</th>
+            <th>报名数</th>
+            <th>状态</th>
+            <th>发布时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="jobs-tbody"></tbody>
+      </table>
+      <div class="admin-pagination" id="jobs-pagination"></div>
+    </div>
+  </div>
+
+  <script type="module" src="../JavaScript/admin.js"></script>
+</body>
+</html>

@@ -194,7 +194,7 @@ router.delete('/:id', authRequired, (req, res) => {
   const post = get('SELECT * FROM posts WHERE id = ?', [req.params.id]);
 
   if (!post) return res.status(404).json({ code: 404, message: '帖子不存在' });
-  if (post.author_id !== req.user.id) return res.status(403).json({ code: 403, message: '无权限删除此帖子' });
+  if (post.author_id !== req.user.id && req.user.role !== 'admin') return res.status(403).json({ code: 403, message: '无权限删除此帖子' });
 
   // 清理关联数据
   run('DELETE FROM likes WHERE target_type = ? AND target_id = ?', ['post', post.id]);

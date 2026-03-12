@@ -58,6 +58,11 @@ function migrateDatabase() {
       if (!colNames.includes('cover_image')) {
         db.run("ALTER TABLE users ADD COLUMN cover_image VARCHAR(255) DEFAULT ''");
       }
+      if (!colNames.includes('role')) {
+        db.run("ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user'");
+        // 将 admin 用户设为管理员
+        db.run("UPDATE users SET role = 'admin' WHERE username = 'admin'");
+      }
     }
   } catch (e) {
     console.log('数据库迁移跳过:', e.message);
@@ -74,6 +79,7 @@ function initTables() {
       avatar VARCHAR(255) DEFAULT '',
       cover_image VARCHAR(255) DEFAULT '',
       bio TEXT DEFAULT '',
+      role VARCHAR(20) DEFAULT 'user',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -226,7 +232,7 @@ function seedData() {
   // 插入测试用户（密码加密）
   const adminHash = bcrypt.hashSync('123456', 10);
   const testHash = bcrypt.hashSync('test123', 10);
-  db.run('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', ['admin', adminHash, 'admin@campus.com']);
+  db.run('INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, ?)', ['admin', adminHash, 'admin@campus.com', 'admin']);
   db.run('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', ['test', testHash, 'test@campus.com']);
 
   // 插入示例帖子

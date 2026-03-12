@@ -69,7 +69,8 @@ router.post('/login', (req, res) => {
         id: user.id,
         username: user.username,
         avatar: user.avatar,
-        email: user.email
+        email: user.email,
+        role: user.role || 'user'
       },
       token
     }
@@ -78,7 +79,7 @@ router.post('/login', (req, res) => {
 
 // GET /api/auth/me - 获取当前用户信息
 router.get('/me', authRequired, (req, res) => {
-  const user = get('SELECT id, username, avatar, email, bio, created_at FROM users WHERE id = ?', [req.user.id]);
+  const user = get('SELECT id, username, avatar, email, bio, role, created_at FROM users WHERE id = ?', [req.user.id]);
 
   if (!user) {
     return res.status(404).json({ code: 404, message: '用户不存在' });

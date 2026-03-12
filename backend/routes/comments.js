@@ -8,7 +8,7 @@ router.delete('/:id', authRequired, (req, res) => {
   const comment = get('SELECT * FROM comments WHERE id = ?', [req.params.id]);
 
   if (!comment) return res.status(404).json({ code: 404, message: '评论不存在' });
-  if (comment.author_id !== req.user.id) return res.status(403).json({ code: 403, message: '无权限删除此评论' });
+  if (comment.author_id !== req.user.id && req.user.role !== 'admin') return res.status(403).json({ code: 403, message: '无权限删除此评论' });
 
   run('DELETE FROM comments WHERE id = ?', [req.params.id]);
   run('UPDATE posts SET comment_count = MAX(0, comment_count - 1) WHERE id = ?', [comment.post_id]);

@@ -83,8 +83,13 @@ export function checkAuth() {
 
   if (userInfo) {
     if (currentUser) {
+      let adminLink = '';
+      if (currentUser.role === 'admin') {
+        adminLink = '<a href="admin.html" class="btn btn-outline" style="margin-right:8px;background:#e74c3c;color:#fff;border-color:#e74c3c;">后台管理</a>';
+      }
       userInfo.innerHTML = `
         <span>欢迎，${currentUser.username}</span>
+        ${adminLink}
         <button class="btn btn-outline" id="logout-btn">退出</button>
       `;
 

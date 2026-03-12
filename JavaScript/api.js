@@ -182,6 +182,12 @@ export async function deletePost(postId) {
   return { success: true, message: data.message };
 }
 
+// 删除评论
+export async function deleteComment(commentId) {
+  const data = await request(`/comments/${commentId}`, { method: 'DELETE' });
+  return { success: true, message: data.message };
+}
+
 // ============ 分类接口 ============
 
 export async function getCategories() {

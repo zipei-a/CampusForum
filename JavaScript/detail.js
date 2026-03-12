@@ -65,7 +65,7 @@ async function loadPost() {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
         <h2>${escapeHtml(post.title)}</h2>
         ${isAuthor ? `
-          <button class="btn btn-sm btn-outline" onclick="confirmDeletePost(${id})">删除帖子</button>
+          <button class="btn btn-sm btn-danger" onclick="confirmDeletePost(${id})" style="white-space: nowrap;">删除帖子</button>
         ` : ''}
       </div>
       <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" style="color: #4CAF50; text-decoration: none;">${escapeHtml(post.author)}</a> | 分类: ${escapeHtml(getCategoryName(post.categoryId))} | ${post.createdAt}</div>

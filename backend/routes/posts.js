@@ -196,6 +196,10 @@ router.delete('/:id', authRequired, (req, res) => {
   if (!post) return res.status(404).json({ code: 404, message: '帖子不存在' });
   if (post.author_id !== req.user.id) return res.status(403).json({ code: 403, message: '无权限删除此帖子' });
 
+  // 清理关联数据
+  run('DELETE FROM likes WHERE target_type = ? AND target_id = ?', ['post', post.id]);
+  run('DELETE FROM notifications WHERE data LIKE ?', [`%"postId":${post.id}%`]);
+  // 删除帖子（comments、post_tags、favorites 通过 ON DELETE CASCADE 自动清理）
   run('DELETE FROM posts WHERE id = ?', [req.params.id]);
   res.json({ code: 200, message: '删除成功' });
 });

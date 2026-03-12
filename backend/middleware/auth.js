@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { get } = require('../database/helpers');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'campus_forum_secret_key_2026';
 
@@ -12,7 +13,12 @@ function authRequired(req, res, next) {
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    // 验证用户在数据库中确实存在，防止数据库重置后旧token仍能使用
+    const dbUser = get('SELECT id, username FROM users WHERE id = ?', [decoded.id]);
+    if (!dbUser || dbUser.username !== decoded.username) {
+      return res.status(401).json({ code: 401, message: '用户信息已失效，请重新登录' });
+    }
+    req.user = { id: dbUser.id, username: dbUser.username };
     next();
   } catch (err) {
     return res.status(401).json({ code: 401, message: 'Token无效或已过期' });
@@ -25,7 +31,11 @@ function authOptional(req, res, next) {
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
     try {
-      req.user = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const dbUser = get('SELECT id, username FROM users WHERE id = ?', [decoded.id]);
+      if (dbUser && dbUser.username === decoded.username) {
+        req.user = { id: dbUser.id, username: dbUser.username };
+      }
     } catch (err) {
       // Token 无效，不阻止请求
     }

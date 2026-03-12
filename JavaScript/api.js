@@ -37,6 +37,14 @@ async function request(url, options = {}) {
   }
 
   if (!response.ok) {
+    // 用户信息已失效，清除本地凭证并跳转登录
+    if (response.status === 401 && getToken()) {
+      removeToken();
+      localStorage.removeItem('currentUser');
+      if (!window.location.pathname.includes('login.html')) {
+        window.location.href = 'login.html';
+      }
+    }
     throw new Error(data.message || '请求失败');
   }
   return data;

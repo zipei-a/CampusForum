@@ -356,6 +356,13 @@ export function isPostLiked(postId) {
   return false;
 }
 
+// ============ 活跃用户接口 ============
+
+export async function getActiveUsers(limit = 5) {
+  const data = await request(`/users/active?limit=${limit}`);
+  return data.data;
+}
+
 // ============ 通知接口 ============
 
 // 获取通知列表

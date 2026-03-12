@@ -1,4 +1,4 @@
-import { getPosts, deletePost, getCurrentUser, getCategories, getCategoryName, getHotTags, getPostsByTag, searchPosts, toggleLike, isPostLiked, toggleFavorite, isPostFavorited, getUnreadNotificationCount } from './api.js';
+import { getPosts, deletePost, getCurrentUser, getCategories, getCategoryName, getHotTags, getPostsByTag, searchPosts, toggleLike, isPostLiked, toggleFavorite, isPostFavorited, getUnreadNotificationCount, getActiveUsers } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { cache } from './cache.js';
@@ -721,6 +721,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderForumPostList();
     renderForumStats();
     bindPostTabs();
+    renderActiveUsers();
     
     console.log('DOMContentLoaded事件处理完成');
   } catch (e) {
@@ -869,6 +870,41 @@ function bindNavbarCategoryEvents() {
       });
     });
   });
+}
+
+// 渲染活跃用户面板
+async function renderActiveUsers() {
+  const container = document.getElementById('active-users-panel');
+  if (!container) return;
+
+  try {
+    const users = await getActiveUsers(5);
+    if (!users || users.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:#999;padding:12px;">暂无活跃用户</div>';
+      return;
+    }
+
+    container.innerHTML = users.map((user, index) => {
+      const rankColors = ['#ff6b35', '#ff9800', '#ffc107'];
+      const rankColor = index < 3 ? rankColors[index] : '#ccc';
+      const avatarContent = user.avatar
+        ? `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`
+        : user.username.charAt(0).toUpperCase();
+
+      return `
+        <div class="info-item" style="cursor:pointer;" onclick="location.href='profile.html?username=${encodeURIComponent(user.username)}'">
+          <div style="width:20px;text-align:center;font-weight:700;color:${rankColor};flex-shrink:0;">${index + 1}</div>
+          <div class="info-avatar">${avatarContent}</div>
+          <div class="info-text">
+            <div class="info-name">${user.username}</div>
+            <div class="info-desc">${user.postCount} 帖子 · ${user.commentCount} 评论</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    console.error('渲染活跃用户失败:', e);
+  }
 }
 
 // 更新通知徽章

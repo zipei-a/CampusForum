@@ -3,6 +3,30 @@ const router = express.Router();
 const { all, get, run } = require('../database/helpers');
 const { authRequired } = require('../middleware/auth');
 
+// GET /api/users/active - 获取活跃用户（按发帖数+评论数加权排序）
+router.get('/active', (req, res) => {
+  const limit = parseInt(req.query.limit) || 5;
+  const users = all(`
+    SELECT u.id, u.username, u.avatar,
+      (SELECT COUNT(*) FROM posts WHERE author_id = u.id) as post_count,
+      (SELECT COUNT(*) FROM comments WHERE author_id = u.id) as comment_count
+    FROM users u
+    ORDER BY (SELECT COUNT(*) FROM posts WHERE author_id = u.id) * 3 + (SELECT COUNT(*) FROM comments WHERE author_id = u.id) DESC
+    LIMIT ?
+  `, [limit]);
+
+  res.json({
+    code: 200,
+    data: users.map(u => ({
+      id: u.id,
+      username: u.username,
+      avatar: u.avatar,
+      postCount: u.post_count,
+      commentCount: u.comment_count
+    }))
+  });
+});
+
 // GET /api/users/by-username/:username - 按用户名获取用户信息
 router.get('/by-username/:username', (req, res) => {
   const user = get('SELECT id, username, avatar, cover_image, email, bio, created_at FROM users WHERE username = ?', [req.params.username]);

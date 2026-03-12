@@ -97,12 +97,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) { showToast('仅支持 jpg/png/gif/webp 格式', 'error'); return; }
 
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
 
     showLoading();
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/upload/image', {
         method: 'POST',
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         body: formData

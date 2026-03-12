@@ -48,16 +48,16 @@ router.get('/', authRequired, (req, res) => {
   });
 });
 
+// PUT /api/notifications/read-all - 标记全部已读（必须在 /:id/read 之前，否则会被参数路由拦截）
+router.put('/read-all', authRequired, (req, res) => {
+  run('UPDATE notifications SET is_read = 1 WHERE user_id = ?', [req.user.id]);
+  res.json({ code: 200, message: '全部已读' });
+});
+
 // PUT /api/notifications/:id/read - 标记单条已读
 router.put('/:id/read', authRequired, (req, res) => {
   run('UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ?', [req.params.id, req.user.id]);
   res.json({ code: 200, message: '标记已读' });
-});
-
-// PUT /api/notifications/read-all - 标记全部已读
-router.put('/read-all', authRequired, (req, res) => {
-  run('UPDATE notifications SET is_read = 1 WHERE user_id = ?', [req.user.id]);
-  res.json({ code: 200, message: '全部已读' });
 });
 
 // GET /api/notifications/unread-count - 获取未读数量

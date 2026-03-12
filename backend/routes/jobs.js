@@ -21,12 +21,12 @@ router.get('/', (req, res) => {
     const total = get('SELECT COUNT(*) as count FROM jobs');
 
     res.json({
-      success: true,
+      code: 200,
       data: { jobs, total: total.count, page: parseInt(page), limit: parseInt(limit) }
     });
   } catch (err) {
     console.error('获取兼职列表失败:', err.message);
-    res.status(500).json({ success: false, message: '获取兼职列表失败' });
+    res.status(500).json({ code: 500, message: '获取兼职列表失败' });
   }
 });
 
@@ -35,7 +35,7 @@ router.post('/', authRequired, (req, res) => {
   try {
     const { title, description, contact, salary, location } = req.body;
     if (!title || !description || !contact) {
-      return res.status(400).json({ success: false, message: '标题、描述和联系方式为必填项' });
+      return res.status(400).json({ code: 400, message: '标题、描述和联系方式为必填项' });
     }
 
     const result = run(
@@ -43,10 +43,10 @@ router.post('/', authRequired, (req, res) => {
       [title.trim(), description.trim(), contact.trim(), (salary || '').trim(), (location || '').trim(), req.user.id]
     );
 
-    res.json({ success: true, data: { id: result.lastInsertRowid } });
+    res.json({ code: 200, data: { id: result.lastInsertRowid } });
   } catch (err) {
     console.error('发布兼职失败:', err.message);
-    res.status(500).json({ success: false, message: '发布兼职失败' });
+    res.status(500).json({ code: 500, message: '发布兼职失败' });
   }
 });
 
@@ -57,17 +57,17 @@ router.post('/:id/apply', authRequired, (req, res) => {
     const { name, phone, message } = req.body;
 
     if (!name || !phone) {
-      return res.status(400).json({ success: false, message: '姓名和电话为必填项' });
+      return res.status(400).json({ code: 400, message: '姓名和电话为必填项' });
     }
 
     const job = get('SELECT * FROM jobs WHERE id = ?', [jobId]);
     if (!job) {
-      return res.status(404).json({ success: false, message: '兼职不存在' });
+      return res.status(404).json({ code: 404, message: '兼职不存在' });
     }
 
     const existing = get('SELECT id FROM job_applications WHERE job_id = ? AND user_id = ?', [jobId, req.user.id]);
     if (existing) {
-      return res.status(400).json({ success: false, message: '你已经报名过了' });
+      return res.status(400).json({ code: 400, message: '你已经报名过了' });
     }
 
     run(
@@ -75,10 +75,10 @@ router.post('/:id/apply', authRequired, (req, res) => {
       [jobId, req.user.id, name.trim(), phone.trim(), (message || '').trim()]
     );
 
-    res.json({ success: true, message: '报名成功' });
+    res.json({ code: 200, message: '报名成功' });
   } catch (err) {
     console.error('报名失败:', err.message);
-    res.status(500).json({ success: false, message: '报名失败' });
+    res.status(500).json({ code: 500, message: '报名失败' });
   }
 });
 
@@ -89,17 +89,17 @@ router.delete('/:id', authRequired, (req, res) => {
     const job = get('SELECT * FROM jobs WHERE id = ?', [jobId]);
 
     if (!job) {
-      return res.status(404).json({ success: false, message: '兼职不存在' });
+      return res.status(404).json({ code: 404, message: '兼职不存在' });
     }
     if (job.publisher_id !== req.user.id) {
-      return res.status(403).json({ success: false, message: '只能删除自己发布的兼职' });
+      return res.status(403).json({ code: 403, message: '只能删除自己发布的兼职' });
     }
 
     run('DELETE FROM jobs WHERE id = ?', [jobId]);
-    res.json({ success: true, message: '删除成功' });
+    res.json({ code: 200, message: '删除成功' });
   } catch (err) {
     console.error('删除兼职失败:', err.message);
-    res.status(500).json({ success: false, message: '删除兼职失败' });
+    res.status(500).json({ code: 500, message: '删除兼职失败' });
   }
 });
 

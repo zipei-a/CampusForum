@@ -1,6 +1,15 @@
 // 工具函数集合
 
 /**
+ * HTML转义，防止XSS
+ */
+export function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/**
  * 绑定汉堡菜单事件
  */
 export function bindMenuToggle() {

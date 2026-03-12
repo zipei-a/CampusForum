@@ -1,13 +1,7 @@
 import { getPostDetail, getComments, createComment, getCurrentUser, deletePost, getCategoryName, getUnreadNotificationCount } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
-
-// HTML转义，防止XSS攻击
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
+import { escapeHtml } from './utils.js';
 
 // 加载评论列表
 async function loadComments(postId) {
@@ -90,9 +84,9 @@ async function loadPost() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
           ${post.likeCount || 0} 点赞
         </span>
-        <span class="stat-item" onclick="document.getElementById('comments-section').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="查看评论">
+        <span id="comment-count-stat" class="stat-item" onclick="document.getElementById('comments-section').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;" title="查看评论">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          ${post.commentCount || 0} 评论
+          <span id="comment-count-number">${post.commentCount || 0}</span> 评论
         </span>
       </div>
     `;
@@ -116,10 +110,9 @@ async function loadPost() {
       showToast('评论成功', 'success');
       document.getElementById('comment-input').value = '';
       // 更新评论计数显示
-      const commentCountEl = document.querySelector('.post-stats .stat-item:last-child');
-      if (commentCountEl) {
-        const currentCount = parseInt(commentCountEl.textContent.match(/\d+/)?.[0] || '0');
-        commentCountEl.innerHTML = commentCountEl.innerHTML.replace(/\d+(\s*评论)/, (currentCount + 1) + '$1');
+      const commentCountNum = document.getElementById('comment-count-number');
+      if (commentCountNum) {
+        commentCountNum.textContent = parseInt(commentCountNum.textContent || '0') + 1;
       }
       await loadComments(id);
     };

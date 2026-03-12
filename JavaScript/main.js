@@ -76,7 +76,7 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
       const liked = isPostLiked(post.id);
       const favorited = isPostFavorited(post.id);
       const tagsHtml = post.tags && post.tags.length > 0 
-        ? post.tags.map(t => `<span class="tag" onclick="filterByTag('${t.name || t}')">${t.name || t}</span>`).join(' ')
+        ? post.tags.map(t => { const tagName = t.name || t; return `<span class="tag" data-tag="${tagName.replace(/"/g, '&quot;')}">${tagName}</span>`; }).join(' ')
         : '';
       
       return `
@@ -84,7 +84,7 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
           <div style="cursor: pointer;" onclick="location.href='detail.html?id=${post.id}'">
             <h3>${post.title}</h3>
             <div class="post-meta">作者: <a href="profile.html?username=${encodeURIComponent(post.author)}" onclick="event.stopPropagation()" style="color: #4CAF50; text-decoration: none;">${post.author}</a> | 分类: ${categoryName} | ${post.createdAt}</div>
-            <div class="post-summary">${post.content.substring(0, 100)}...</div>
+            <div class="post-summary">${(post.content || '').substring(0, 100)}...</div>
             ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
           </div>
           <div class="post-stats" style="margin-top: 12px; display: flex; gap: 16px; align-items: center;">
@@ -702,6 +702,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 绑定搜索事件
     console.log('绑定搜索事件');
     bindSearchEvents();
+    
+    // 事件委托：帖子内标签点击
+    const postList = document.getElementById('post-list');
+    if (postList) {
+      postList.addEventListener('click', (e) => {
+        const tagEl = e.target.closest('.tag[data-tag]');
+        if (tagEl) {
+          e.stopPropagation();
+          filterByTag(tagEl.dataset.tag);
+        }
+      });
+    }
     
     // 绑定popstate事件
     console.log('绑定popstate事件');

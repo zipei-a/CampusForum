@@ -340,10 +340,11 @@ router.post('/:postId/comments', authRequired, (req, res) => {
     );
   }
 
+    const authorUser = get('SELECT id, username, avatar FROM users WHERE id = ?', [req.user.id]);
     res.status(201).json({
       code: 201,
       message: '评论成功',
-      data: { id: result.lastInsertRowid, content: content.trim(), author: req.user.username, createdAt: new Date().toISOString() }
+      data: { id: result.lastInsertRowid, content: content.trim(), author: { id: req.user.id, username: authorUser ? authorUser.username : req.user.username, avatar: authorUser ? authorUser.avatar : '' }, createdAt: new Date().toISOString() }
     });
   } catch (err) {
     console.error('创建评论失败:', err);

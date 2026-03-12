@@ -41,6 +41,15 @@ router.get('/:name/posts', (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   const offset = (parseInt(page) - 1) * parseInt(limit);
 
+  const totalResult = get(`
+    SELECT COUNT(*) as count
+    FROM posts p
+    JOIN post_tags pt ON p.id = pt.post_id
+    JOIN tags t ON pt.tag_id = t.id
+    WHERE t.name = ?
+  `, [req.params.name]);
+  const total = totalResult ? totalResult.count : 0;
+
   const posts = all(`
     SELECT p.*, u.username as author_name, c.name as category_name
     FROM posts p
@@ -65,7 +74,7 @@ router.get('/:name/posts', (req, res) => {
     createdAt: p.created_at
   }));
 
-  res.json({ code: 200, data: { posts: formattedPosts } });
+  res.json({ code: 200, data: { posts: formattedPosts, pagination: { page: parseInt(page), limit: parseInt(limit), total } } });
 });
 
 module.exports = router;

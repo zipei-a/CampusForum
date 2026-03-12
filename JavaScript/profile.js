@@ -1,4 +1,4 @@
-import { getCurrentUser, getPosts, getUserFavorites, logout, getUserProfileByUsername, getUserPosts, updateUserProfile, uploadImage, getUnreadNotificationCount } from './api.js';
+import { getCurrentUser, getUserFavorites, logout, getUserProfileByUsername, getUserPosts, updateUserProfile, uploadImage, getUnreadNotificationCount } from './api.js';
 import { showLoading, hideLoading, showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { bindMenuToggle } from './utils.js';
@@ -122,12 +122,7 @@ async function loadMyPosts(container) {
   showLoading();
   try {
     let userPosts;
-    if (isOwnProfile) {
-      const posts = await getPosts();
-      userPosts = posts.filter(p => p.author === profileUser.username);
-    } else {
-      userPosts = await getUserPosts(profileUser.id);
-    }
+    userPosts = await getUserPosts(profileUser.id);
     
     if (userPosts.length === 0) {
       container.innerHTML = `
@@ -148,7 +143,7 @@ async function loadMyPosts(container) {
           <article class="post-item" onclick="location.href='detail.html?id=${post.id}'">
             <h3>${post.title}</h3>
             <div class="post-meta">${post.createdAt}</div>
-            <div class="post-summary">${post.content.substring(0, 100)}...</div>
+            <div class="post-summary">${(post.content || '').substring(0, 100)}...</div>
             <div class="post-stats">
               <span class="stat-item">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -160,7 +155,7 @@ async function loadMyPosts(container) {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
-                ${post.comments ? post.comments.length : 0}
+                ${post.commentCount || 0}
               </span>
             </div>
           </article>
@@ -198,7 +193,7 @@ async function loadMyFavorites(container) {
           <article class="post-item" onclick="location.href='detail.html?id=${post.id}'">
             <h3>${post.title}</h3>
             <div class="post-meta">作者: ${post.author} | ${post.createdAt}</div>
-            <div class="post-summary">${post.content.substring(0, 100)}...</div>
+            <div class="post-summary">${(post.content || '').substring(0, 100)}...</div>
           </article>
         `).join('')}
       </div>

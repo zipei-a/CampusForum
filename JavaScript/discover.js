@@ -1,7 +1,7 @@
 import { showToast } from './ui.js';
 import { checkAuth } from './auth.js';
 import { getCurrentUser, getUnreadNotificationCount } from './api.js';
-import { bindMenuToggle } from './utils.js';
+import { bindMenuToggle, escapeHtml } from './utils.js';
 
 const JW_HOME = 'https://jw.cqupt.edu.cn';
 const API_BASE = '/api';
@@ -30,7 +30,7 @@ async function loadJobs() {
     }
     const data = await res.json();
     console.log('Jobs API response:', data);
-    if (!data.success) {
+    if (data.code !== 200) {
       throw new Error(data.message || '获取兼职列表失败');
     }
     const jobs = data.data?.jobs || [];
@@ -67,12 +67,6 @@ async function loadJobs() {
   }
 }
 
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
 // 打开报名弹窗
 window.openApplyModal = function(jobId) {
   const user = getCurrentUser();
@@ -94,7 +88,7 @@ window.deleteJob = async function(jobId) {
       headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     const data = await res.json();
-    if (data.success) {
+    if (data.code === 200) {
       showToast('删除成功', 'success');
       loadJobs();
     } else {
@@ -137,7 +131,7 @@ function bindPublishForm() {
         body: JSON.stringify(body)
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.code === 200) {
         showToast('发布成功！', 'success');
         form.reset();
         document.getElementById('job-publish-modal').style.display = 'none';
@@ -176,7 +170,7 @@ function bindApplyForm() {
         body: JSON.stringify(body)
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.code === 200) {
         showToast('报名成功！', 'success');
         form.reset();
         document.getElementById('job-apply-modal').style.display = 'none';
@@ -190,10 +184,14 @@ function bindApplyForm() {
   });
 }
 
-// 点击弹窗外部关闭
+// 点击弹窗外部关闭并重置表单
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) overlay.style.display = 'none';
+    if (e.target === overlay) {
+      overlay.style.display = 'none';
+      const form = overlay.querySelector('form');
+      if (form) form.reset();
+    }
   });
 });
 

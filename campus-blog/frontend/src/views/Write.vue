@@ -1,135 +1,140 @@
 <template>
-  <div class="min-h-screen bg-stone-50">
-    <!-- 顶部工具栏 -->
-    <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
-      <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
-        <!-- 左侧：返回 + 状态 -->
-        <div class="flex items-center gap-4">
-          <router-link to="/" class="flex items-center gap-2 text-stone-500 hover:text-stone-800 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            <span class="text-sm">返回</span>
-          </router-link>
-          <div class="h-4 w-px bg-stone-200"></div>
-          <span class="text-sm font-medium text-stone-700">{{ isEdit ? '编辑文章' : '新文章' }}</span>
+  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+    <div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <section class="overflow-hidden rounded-[34px] border border-white/8 bg-white/[0.03] shadow-[0_30px_90px_rgba(0,0,0,0.28)]">
+        <div class="border-b border-white/8 bg-neutral-950/55 px-6 py-4 backdrop-blur-xl sm:px-8">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex items-center gap-4">
+              <router-link to="/" class="inline-flex items-center gap-2 text-sm text-white/42 transition hover:text-white/78">
+                <span>←</span>
+                返回首页
+              </router-link>
+              <div class="hidden h-4 w-px bg-white/10 sm:block"></div>
+              <span class="text-sm text-white/58">{{ isEdit ? '正在编辑文章' : '新建一篇文章' }}</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 text-xs text-white/35">
+              <span class="rounded-full border border-white/8 px-3 py-1">{{ wordCount }} 字</span>
+              <span class="rounded-full border border-white/8 px-3 py-1">{{ estimatedMinutes }} 分钟阅读</span>
+            </div>
+          </div>
         </div>
-        <!-- 右侧：字数 + 发布 -->
-        <div class="flex items-center gap-4">
-          <span class="text-sm text-stone-400">{{ wordCount }} 字</span>
+
+        <div class="p-6 sm:p-8 lg:p-10">
+          <div class="mb-8">
+            <div
+              v-if="!form.cover_image"
+              @click="triggerUpload"
+              @dragover.prevent="dragOver = true"
+              @dragleave="dragOver = false"
+              @drop.prevent="handleDrop"
+              :class="[
+                'group cursor-pointer rounded-[28px] border-2 border-dashed p-10 text-center transition-all duration-300',
+                dragOver
+                  ? 'border-accent-300 bg-accent-500/10'
+                  : 'border-white/10 bg-neutral-950/35 hover:border-accent-200/35 hover:bg-neutral-950/55'
+              ]"
+            >
+              <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-2xl text-white/65 transition group-hover:bg-white/10">
+                ⌁
+              </div>
+              <p class="mt-5 text-lg font-medium text-white">添加封面图</p>
+              <p class="mt-2 text-sm text-white/38">拖放或点击上传 · JPG / PNG · 最大 5MB</p>
+            </div>
+            <div v-else class="group relative overflow-hidden rounded-[28px] border border-white/8">
+              <img :src="form.cover_image" class="h-72 w-full object-cover" />
+              <div class="absolute inset-0 flex items-center justify-center gap-3 bg-black/40 opacity-0 transition group-hover:opacity-100">
+                <button type="button" @click="triggerUpload" class="rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-950 hover:bg-accent-50">更换图片</button>
+                <button type="button" @click="form.cover_image = ''" class="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20">移除</button>
+              </div>
+            </div>
+            <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleUpload" />
+          </div>
+
+          <textarea
+            v-model="form.title"
+            placeholder="给这篇文章起一个像封面标题一样抓人的名字……"
+            rows="2"
+            @input="autoResizeTitle"
+            ref="titleInput"
+            class="w-full resize-none border-none bg-transparent font-display text-4xl leading-tight text-white placeholder:text-white/22 outline-none sm:text-5xl"
+          ></textarea>
+
+          <div class="mt-8 border-y border-white/8 py-5">
+            <div class="flex flex-wrap gap-3">
+              <button
+                v-for="cat in categories"
+                :key="cat.id"
+                type="button"
+                @click="form.category = form.category === cat.name ? '' : cat.name"
+                :class="[
+                  'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-all',
+                  form.category === cat.name
+                    ? 'border border-accent-200/35 bg-accent-500/20 text-white'
+                    : 'border border-white/10 bg-white/5 text-white/52 hover:bg-white/10 hover:text-white'
+                ]"
+              >
+                <span>{{ cat.icon }}</span>
+                <span>{{ cat.name }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-8 relative">
+            <textarea
+              v-model="form.content"
+              placeholder="开始写吧。\n\n把活动现场、社团故事、学习经验、校园观察，写成真正值得被阅读的内容。"
+              ref="contentInput"
+              @input="autoResizeContent"
+              class="min-h-[460px] w-full resize-none border-none bg-transparent text-lg leading-[2] text-white/72 placeholder:text-white/22 outline-none"
+            ></textarea>
+            <div v-if="!form.content" class="pointer-events-none absolute bottom-4 right-0 text-xs uppercase tracking-[0.2em] text-white/16">
+              Editorial Writing Mode
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="space-y-6">
+        <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
+          <p class="eyebrow">Publishing Panel</p>
+          <h2 class="section-title !text-2xl">发布控制台</h2>
+          <div class="mt-6 space-y-4 text-sm text-white/55">
+            <div class="meta-box"><span>标题状态</span><strong>{{ form.title ? '已填写' : '待补充' }}</strong></div>
+            <div class="meta-box"><span>栏目</span><strong>{{ form.category || '未选择' }}</strong></div>
+            <div class="meta-box"><span>字数</span><strong>{{ wordCount }}</strong></div>
+            <div class="meta-box"><span>阅读时长</span><strong>{{ estimatedMinutes }} 分钟</strong></div>
+          </div>
           <button
             type="button"
             @click="handleSubmit"
             :disabled="submitting || !form.title || !form.content"
-            class="px-5 py-2 bg-accent-700 text-white rounded-full text-sm font-medium hover:bg-accent-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+            class="mt-6 w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-neutral-950 transition hover:bg-accent-50 disabled:opacity-40"
           >
-            <span v-if="submitting" class="flex items-center gap-2">
-              <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-              </svg>
-              发布中...
-            </span>
+            <span v-if="submitting">发布中…</span>
             <span v-else>{{ isEdit ? '保存修改' : '发布文章' }}</span>
           </button>
         </div>
-      </div>
-    </div>
 
-    <!-- 主体区域 -->
-    <div class="max-w-3xl mx-auto px-6 py-12">
-      <!-- 封面图区域 -->
-      <div class="mb-8">
-        <div
-          v-if="!form.cover_image"
-          @click="triggerUpload"
-          @dragover.prevent="dragOver = true"
-          @dragleave="dragOver = false"
-          @drop.prevent="handleDrop"
-          :class="[
-            'group relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-300',
-            dragOver
-              ? 'border-accent-500 bg-accent-50'
-              : 'border-stone-300 hover:border-accent-400 hover:bg-stone-100/50'
-          ]"
-        >
-          <div class="flex flex-col items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-stone-100 group-hover:bg-accent-100 flex items-center justify-center transition-colors">
-              <svg class="w-5 h-5 text-stone-400 group-hover:text-accent-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.583-4.583a.5.5 0 01.707 0L16 16m-2-2l1.583-1.583a.5.5 0 01.707 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-stone-600">添加封面图片</p>
-              <p class="text-xs text-stone-400 mt-1">拖放或点击上传 · JPG/PNG · 最大 5MB</p>
-            </div>
+        <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
+          <p class="eyebrow">Writing Advice</p>
+          <h2 class="section-title !text-2xl">编辑建议</h2>
+          <ul class="mt-5 space-y-3 text-sm leading-7 text-white/48">
+            <li>• 标题尽量有画面感，而不是流水账。</li>
+            <li>• 开头第一段应该能立刻把读者拉进现场。</li>
+            <li>• 分类让首页的信息结构更清晰。</li>
+            <li>• 一张好的封面图会显著提升点击欲望。</li>
+          </ul>
+        </div>
+
+        <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
+          <div class="h-2 overflow-hidden rounded-full bg-white/8">
+            <div class="h-full rounded-full bg-gradient-to-r from-primary-400 to-accent-300 transition-all duration-300" :style="{ width: progressWidth }"></div>
           </div>
+          <p class="mt-4 text-xs uppercase tracking-[0.18em] text-white/28">Writing progress</p>
+          <p class="mt-2 text-sm text-white/46">当前完成度 {{ Math.round(parseFloat(progressWidth)) }}%，继续写，把它打磨成一篇真正拿得出手的作品。</p>
         </div>
-        <div v-else class="relative group rounded-2xl overflow-hidden">
-          <img :src="form.cover_image" class="w-full h-56 object-cover" />
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-            <button type="button" @click="triggerUpload" class="px-4 py-2 bg-white text-stone-800 rounded-full text-sm font-medium hover:bg-stone-100 transition">
-              更换图片
-            </button>
-            <button type="button" @click="form.cover_image = ''" class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium hover:bg-white/30 transition">
-              移除
-            </button>
-          </div>
-        </div>
-        <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleUpload" />
-      </div>
-
-      <!-- 标题 -->
-      <textarea
-        v-model="form.title"
-        placeholder="文章标题……"
-        rows="2"
-        @input="autoResizeTitle"
-        ref="titleInput"
-        class="w-full text-3xl md:text-4xl font-display font-bold text-stone-900 placeholder-stone-300 bg-transparent border-none outline-none resize-none leading-tight mb-6"
-      ></textarea>
-
-      <!-- 分类选择 -->
-      <div class="flex flex-wrap gap-2 mb-8 pb-6 border-b border-stone-200">
-        <button
-          v-for="cat in categories"
-          :key="cat.id"
-          type="button"
-          @click="form.category = form.category === cat.name ? '' : cat.name"
-          :class="[
-            'px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200',
-            form.category === cat.name
-              ? 'bg-accent-700 text-white shadow-sm'
-              : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
-          ]"
-        >
-          {{ cat.icon }} {{ cat.name }}
-        </button>
-      </div>
-
-      <!-- 正文 -->
-      <div class="relative">
-        <textarea
-          v-model="form.content"
-          placeholder="开始写作……\n\n分享你的故事、想法、经历……"
-          ref="contentInput"
-          @input="autoResizeContent"
-          class="w-full text-stone-700 placeholder-stone-300 bg-transparent border-none outline-none resize-none leading-relaxed text-lg font-body min-h-[400px]"
-          style="line-height: 1.9"
-        ></textarea>
-        <!-- 空状态提示 -->
-        <div v-if="!form.content" class="absolute bottom-4 right-0 text-xs text-stone-300 pointer-events-none">
-          Markdown 支持即将到来
-        </div>
-      </div>
-    </div>
-
-    <!-- 底部进度条 -->
-    <div class="fixed bottom-0 left-0 right-0 h-0.5 bg-stone-200">
-      <div
-        class="h-full bg-accent-600 transition-all duration-300"
-        :style="{ width: progressWidth }"
-      ></div>
+      </aside>
     </div>
   </div>
 </template>
@@ -156,15 +161,17 @@ const titleInput = ref(null)
 const contentInput = ref(null)
 const dragOver = ref(false)
 
-// 字数统计
 const wordCount = computed(() => {
   return (form.value.title + form.value.content).replace(/\s/g, '').length
 })
 
-// 底部进度条：以600字为满
+const estimatedMinutes = computed(() => {
+  return Math.max(1, Math.ceil(wordCount.value / 350))
+})
+
 const progressWidth = computed(() => {
   const total = wordCount.value
-  const pct = Math.min((total / 600) * 100, 100)
+  const pct = Math.min((total / 1200) * 100, 100)
   return pct + '%'
 })
 
@@ -262,7 +269,6 @@ const handleSubmit = async () => {
 
 onMounted(async () => {
   await Promise.all([fetchCategories(), fetchPost()])
-  // 新文章时自动聚焦标题
   if (!route.params.id) {
     await nextTick()
     titleInput.value?.focus()

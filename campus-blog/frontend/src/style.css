@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap');
-
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -136,6 +134,27 @@
 
   .meta-box strong {
     @apply font-semibold text-white;
+  }
+
+  .auth-input {
+    @apply w-full rounded-3xl border border-white/10 bg-white/5 px-5 py-3.5 text-sm text-white placeholder:text-white/25 outline-none transition;
+  }
+
+  .auth-input:focus {
+    @apply border-accent-200 bg-white/10;
+    box-shadow: 0 0 0 4px rgba(58, 130, 104, 0.08);
+  }
+
+  .profile-stat {
+    @apply rounded-3xl border border-white/10 bg-neutral-950/40 px-4 py-4 text-center;
+  }
+
+  .profile-stat-value {
+    @apply font-display text-3xl text-white;
+  }
+
+  .profile-stat-label {
+    @apply mt-1 text-[11px] uppercase tracking-[0.18em] text-white;
   }
 }
 

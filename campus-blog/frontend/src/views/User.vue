@@ -1,152 +1,138 @@
 <template>
-  <div class="max-w-4xl mx-auto">
-    <!-- 加载状态 -->
+  <div class="mx-auto max-w-6xl space-y-8">
     <div v-if="loading" class="space-y-6 animate-pulse">
-      <div class="bg-white rounded-2xl overflow-hidden shadow-card">
-        <div class="h-40 bg-stone-200"></div>
+      <div class="rounded-[32px] border border-white/8 bg-white/[0.03] overflow-hidden">
+        <div class="h-56 bg-white/5"></div>
         <div class="px-8 pb-8">
-          <div class="flex items-end -mt-10 mb-6">
-            <div class="w-20 h-20 rounded-full bg-stone-200 border-4 border-white"></div>
-            <div class="ml-4 mb-1 space-y-2">
-              <div class="h-5 w-32 bg-stone-200 rounded"></div>
-              <div class="h-3 w-48 bg-stone-200 rounded"></div>
+          <div class="-mt-12 flex items-end gap-4">
+            <div class="h-24 w-24 rounded-full bg-white/10 ring-4 ring-neutral-950"></div>
+            <div class="space-y-3 pb-2">
+              <div class="h-6 w-40 rounded bg-white/10"></div>
+              <div class="h-4 w-64 rounded bg-white/10"></div>
             </div>
-          </div>
-          <div class="flex gap-8">
-            <div v-for="i in 3" :key="i" class="h-10 w-16 bg-stone-200 rounded"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 用户信息卡片 -->
-    <div v-else class="space-y-8">
-      <div class="bg-white rounded-2xl overflow-hidden shadow-card">
-        <!-- 横幅 -->
-        <div class="relative h-44 bg-gradient-to-br from-accent-700 via-accent-600 to-stone-600 overflow-hidden">
+    <template v-else>
+      <section class="overflow-hidden rounded-[34px] border border-white/8 bg-white/[0.03] shadow-[0_28px_90px_rgba(0,0,0,0.28)]">
+        <div class="relative h-56 overflow-hidden bg-[linear-gradient(135deg,_rgba(168,115,85,0.3),_rgba(58,130,104,0.22),_rgba(20,20,20,0.82))]">
           <div class="absolute inset-0">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-2xl"></div>
-            <div class="absolute bottom-0 left-20 w-40 h-40 bg-black/10 rounded-full translate-y-1/2 blur-xl"></div>
+            <div class="absolute -right-16 top-0 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+            <div class="absolute left-10 bottom-0 h-44 w-44 rounded-full bg-black/10 blur-2xl"></div>
           </div>
-          <!-- 是自己则显示编辑按钮 -->
-          <div v-if="isOwner" class="absolute top-4 right-4">
-            <button class="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs rounded-full transition">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-              </svg>
-              编辑资料
+          <div class="absolute right-6 top-6" v-if="isOwner">
+            <button class="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/80 transition hover:bg-white/15 hover:text-white">
+              编辑资料（预留）
             </button>
           </div>
         </div>
 
-        <div class="px-8 pb-8">
-          <!-- 头像 + 基本信息 -->
-          <div class="flex items-end justify-between -mt-10 mb-6">
-            <div class="flex items-end gap-4">
+        <div class="px-6 pb-8 sm:px-8 lg:px-10">
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end -mt-14">
               <img
                 :src="user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`"
-                class="w-20 h-20 rounded-full border-4 border-white bg-white object-cover shadow-md"
+                class="h-24 w-24 rounded-full border-4 border-neutral-950 bg-neutral-900 object-cover shadow-xl"
               />
-              <div class="mb-1">
-                <h1 class="text-xl font-bold text-stone-900 font-display">{{ user.username }}</h1>
-                <p class="text-stone-500 text-sm mt-0.5">{{ user.bio || '这个人很懒，什么都没写…' }}</p>
+              <div class="pb-2">
+                <p class="text-[11px] uppercase tracking-[0.24em] text-white/35">Author Profile</p>
+                <h1 class="mt-2 font-display text-4xl text-white">{{ user.username }}</h1>
+                <p class="mt-2 max-w-2xl text-sm leading-7 text-white/50">{{ user.bio || '这个人暂时还没写简介，但已经开始建立自己的校园内容版面。' }}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 lg:min-w-[360px]">
+              <div class="profile-stat">
+                <p class="profile-stat-value">{{ stats.post_count || 0 }}</p>
+                <p class="profile-stat-label">文章</p>
+              </div>
+              <div class="profile-stat">
+                <p class="profile-stat-value">{{ formatNumber(stats.total_views) }}</p>
+                <p class="profile-stat-label">阅读</p>
+              </div>
+              <div class="profile-stat">
+                <p class="profile-stat-value">{{ formatNumber(stats.total_likes) }}</p>
+                <p class="profile-stat-label">获赞</p>
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <!-- 统计数据 -->
-          <div class="flex gap-8">
-            <div class="text-center">
-              <p class="text-2xl font-bold text-stone-900 font-display">{{ stats.post_count || 0 }}</p>
-              <p class="text-xs text-stone-400 mt-0.5">文章</p>
+      <section class="grid gap-8 xl:grid-cols-[1fr_300px]">
+        <div class="rounded-[30px] border border-white/8 bg-white/[0.03] p-6 sm:p-8">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <p class="eyebrow">Author Archive</p>
+              <h2 class="section-title !text-3xl">TA 的文章</h2>
             </div>
-            <div class="w-px bg-stone-100"></div>
-            <div class="text-center">
-              <p class="text-2xl font-bold text-stone-900 font-display">{{ formatNumber(stats.total_views) }}</p>
-              <p class="text-xs text-stone-400 mt-0.5">阅读</p>
-            </div>
-            <div class="w-px bg-stone-100"></div>
-            <div class="text-center">
-              <p class="text-2xl font-bold text-stone-900 font-display">{{ formatNumber(stats.total_likes) }}</p>
-              <p class="text-xs text-stone-400 mt-0.5">获赞</p>
-            </div>
+            <span class="rounded-full border border-white/8 px-3 py-1 text-xs text-white/40">共 {{ posts.length }} 篇</span>
           </div>
-        </div>
-      </div>
 
-      <!-- 文章列表 -->
-      <div>
-        <div class="flex items-center justify-between mb-5">
-          <h2 class="font-display text-lg font-bold text-stone-900">TA 的文章</h2>
-          <span class="text-sm text-stone-400">共 {{ posts.length }} 篇</span>
-        </div>
-
-        <!-- 空状态 -->
-        <div v-if="posts.length === 0" class="bg-white rounded-2xl shadow-card py-16 text-center">
-          <div class="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-7 h-7 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
+          <div v-if="posts.length === 0" class="mt-8 rounded-[26px] border border-dashed border-white/10 px-6 py-16 text-center">
+            <p class="text-lg text-white/55">还没有发布文章</p>
+            <router-link v-if="isOwner" to="/write" class="mt-5 inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-accent-50">
+              写第一篇
+            </router-link>
           </div>
-          <p class="text-stone-400 text-sm">还没有发布文章</p>
-          <router-link v-if="isOwner" to="/write" class="inline-block mt-4 px-5 py-2 bg-accent-700 text-white text-sm rounded-full hover:bg-accent-800 transition">
-            写第一篇
-          </router-link>
-        </div>
 
-        <!-- 文章卡片列表 -->
-        <div v-else class="space-y-3">
-          <router-link
-            v-for="post in posts"
-            :key="post.id"
-            :to="`/post/${post.id}`"
-            class="group flex gap-5 bg-white rounded-xl shadow-card p-5 hover:shadow-elegant transition-all duration-200"
-          >
-            <!-- 封面缩略图 -->
-            <div v-if="post.cover_image" class="flex-shrink-0">
-              <img :src="post.cover_image" class="w-24 h-20 object-cover rounded-lg" />
-            </div>
+          <div v-else class="mt-8 space-y-4">
+            <router-link
+              v-for="post in posts"
+              :key="post.id"
+              :to="`/post/${post.id}`"
+              class="group flex flex-col gap-5 rounded-[26px] border border-white/8 bg-neutral-950/35 p-5 transition hover:bg-neutral-950/55 lg:flex-row"
+            >
+              <div v-if="post.cover_image" class="h-40 overflow-hidden rounded-[22px] lg:h-28 lg:w-44 lg:flex-shrink-0">
+                <img :src="post.cover_image" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+              </div>
+              <div v-else class="flex h-40 items-center justify-center rounded-[22px] bg-[linear-gradient(135deg,_rgba(58,130,104,0.18),_rgba(168,115,85,0.18))] text-5xl lg:h-28 lg:w-44 lg:flex-shrink-0">
+                {{ getCategoryIcon(post.category) }}
+              </div>
 
-            <!-- 文章信息 -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-3">
-                <h3 class="font-semibold text-stone-900 group-hover:text-accent-700 transition-colors line-clamp-2 leading-snug">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/32">
+                  <span class="rounded-full border border-white/8 bg-white/5 px-3 py-1 text-white/52">{{ post.category || '未分类' }}</span>
+                  <span>{{ formatDate(post.created_at) }}</span>
+                </div>
+                <h3 class="mt-3 line-clamp-2 font-display text-2xl leading-tight text-white group-hover:text-accent-100">
                   {{ post.title }}
                 </h3>
-                <span v-if="post.category" class="flex-shrink-0 px-2 py-0.5 bg-accent-50 text-accent-700 rounded-full text-xs font-medium">
-                  {{ post.category }}
-                </span>
+                <p class="mt-3 line-clamp-2 text-sm leading-7 text-white/45">{{ excerpt(post) }}</p>
+                <div class="mt-4 flex flex-wrap gap-4 text-xs text-white/34">
+                  <span>{{ formatNumber(post.views) }} 阅读</span>
+                  <span>{{ post.likes || 0 }} 喜欢</span>
+                  <span>{{ post.comment_count || 0 }} 评论</span>
+                </div>
               </div>
-
-              <p v-if="post.excerpt" class="text-sm text-stone-400 mt-1.5 line-clamp-1">{{ post.excerpt }}</p>
-
-              <div class="flex items-center gap-4 mt-3 text-xs text-stone-400">
-                <span>{{ formatDate(post.created_at) }}</span>
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                  </svg>
-                  {{ formatNumber(post.views) }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                  </svg>
-                  {{ post.likes }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                  </svg>
-                  {{ post.comment_count }}
-                </span>
-              </div>
-            </div>
-          </router-link>
+            </router-link>
+          </div>
         </div>
-      </div>
-    </div>
+
+        <aside class="space-y-6">
+          <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
+            <p class="eyebrow">Author Notes</p>
+            <h2 class="section-title !text-2xl">作者画像</h2>
+            <div class="mt-6 space-y-4 text-sm text-white/52">
+              <div class="meta-box"><span>内容数量</span><strong>{{ stats.post_count || 0 }}</strong></div>
+              <div class="meta-box"><span>总阅读量</span><strong>{{ formatNumber(stats.total_views) }}</strong></div>
+              <div class="meta-box"><span>总获赞</span><strong>{{ formatNumber(stats.total_likes) }}</strong></div>
+              <div class="meta-box"><span>页面身份</span><strong>{{ isOwner ? '本人主页' : '作者主页' }}</strong></div>
+            </div>
+          </div>
+
+          <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
+            <p class="eyebrow">Editorial Tip</p>
+            <h2 class="section-title !text-2xl">为什么这样改</h2>
+            <p class="mt-4 text-sm leading-7 text-white/48">
+              成熟内容网站的个人主页，通常不是“头像 + 列表”这么简单，而要有作者感、专栏感和明确的数据气质。这个版本就是往那个方向推的。
+            </p>
+          </div>
+        </aside>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -190,6 +176,22 @@ const formatNumber = (num) => {
   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
   return num
+}
+
+const getCategoryIcon = (name) => {
+  const map = {
+    学习: '📚',
+    生活: '🌿',
+    活动: '🎉',
+    社团: '🎭',
+    心情: '✨',
+    技术: '💻'
+  }
+  return map[name] || '📝'
+}
+
+const excerpt = (post) => {
+  return post.excerpt || post.content?.replace(/<[^>]+>/g, '').slice(0, 96) || '这篇文章正在等待你点开阅读。'
 }
 
 onMounted(fetchUser)

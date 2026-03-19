@@ -1,105 +1,106 @@
 <template>
   <div class="space-y-10 lg:space-y-14">
-    <section class="grid gap-6 lg:grid-cols-[1.35fr_0.8fr] xl:gap-8">
-      <div class="hero-panel relative overflow-hidden rounded-[32px] border border-white/10 px-6 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.12),_transparent_22%),radial-gradient(circle_at_80%_20%,_rgba(58,130,104,0.22),_transparent_25%),linear-gradient(135deg,_rgba(39,31,26,0.96),_rgba(14,14,14,0.88))]"></div>
-        <div class="absolute -right-10 top-8 h-52 w-52 rounded-full bg-accent-300/10 blur-xl"></div>
-        <div class="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-primary-300/10 blur-xl"></div>
+    <section class="grid gap-6 lg:grid-cols-[1.35fr_0.82fr] xl:gap-8">
+      <div class="hero-panel-youth relative overflow-hidden rounded-[36px] border border-white/80 px-6 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.65),_transparent_25%),radial-gradient(circle_at_82%_18%,_rgba(255,198,216,0.55),_transparent_24%),linear-gradient(135deg,_rgba(255,255,255,0.92),_rgba(246,248,255,0.92))]"></div>
+        <div class="absolute -right-10 top-8 h-44 w-44 rounded-full bg-pink-200/70 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 h-36 w-36 rounded-full bg-sky-200/60 blur-xl"></div>
 
         <div class="relative z-10 max-w-2xl">
-          <div class="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-white/60">
-            <span class="h-2 w-2 rounded-full bg-accent-300"></span>
-            Editorial Campus Platform
+          <div class="inline-flex items-center gap-3 rounded-full bg-white px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-slate-500 shadow-sm">
+            <span class="h-2 w-2 rounded-full bg-pink-400"></span>
+            Youth Campus Community
           </div>
 
-          <h1 class="mt-6 max-w-3xl font-display text-4xl leading-[1.02] text-white sm:text-5xl lg:text-6xl">
-            把校园博客，做成一份真正有质感的
-            <span class="text-gradient-gold">数字校刊</span>
+          <h1 class="mt-6 max-w-3xl font-display text-4xl leading-[1.02] text-slate-900 sm:text-5xl lg:text-6xl">
+            让校园博客变成一个
+            <span class="text-gradient-youth">更年轻、更好逛</span>
+            的内容社区
           </h1>
 
-          <p class="mt-6 max-w-2xl text-base leading-8 text-white/68 sm:text-lg">
-            参考成熟内容社区与高校媒体站的信息组织方式，我们把这个项目改造成更像
-            “校园媒体中心 + 学生创作者社区” 的形态：有焦点区、有栏目流、有热门作者，也有更强的阅读氛围。
+          <p class="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+            少一点端着的“校刊感”，多一点年轻人的分享欲、表达欲和社交氛围。
+            这里应该像你每天愿意刷一会儿的校园首页，而不是只用来交作业的网站。
           </p>
 
           <div class="mt-8 flex flex-wrap gap-3 sm:gap-4">
-            <router-link v-if="!userStore.user" to="/register" class="btn-hero-primary">
-              加入创作者社区
+            <router-link v-if="!userStore.user" to="/register" class="btn-hero-youth-primary">
+              加入大家一起玩
             </router-link>
-            <router-link v-else to="/write" class="btn-hero-primary">
-              去发布我的故事
+            <router-link v-else to="/write" class="btn-hero-youth-primary">
+              发一条校园动态
             </router-link>
-            <a href="#story-stream" class="btn-hero-secondary">查看内容流</a>
+            <a href="#story-stream" class="btn-hero-youth-secondary">去逛内容流</a>
           </div>
 
           <div class="mt-10 grid gap-4 sm:grid-cols-3">
-            <div class="stat-card">
-              <p class="stat-value">{{ posts.length }}</p>
-              <p class="stat-label">精选文章</p>
+            <div class="stat-card-youth">
+              <p class="stat-value text-slate-900">{{ posts.length }}</p>
+              <p class="stat-label text-slate-500">首页内容</p>
             </div>
-            <div class="stat-card">
-              <p class="stat-value">{{ categories.length }}</p>
-              <p class="stat-label">校园栏目</p>
+            <div class="stat-card-youth">
+              <p class="stat-value text-slate-900">{{ categories.length }}</p>
+              <p class="stat-label text-slate-500">热门栏目</p>
             </div>
-            <div class="stat-card">
-              <p class="stat-value">{{ totalPostCount }}</p>
-              <p class="stat-label">内容总量</p>
+            <div class="stat-card-youth">
+              <p class="stat-value text-slate-900">{{ totalPostCount }}</p>
+              <p class="stat-label text-slate-500">社区动态</p>
             </div>
           </div>
         </div>
       </div>
 
       <aside class="grid gap-6">
-        <div class="panel-glass rounded-[28px] p-6">
+        <div class="panel-youth rounded-[30px] p-6">
           <div class="flex items-center justify-between">
             <div>
-              <p class="eyebrow">Campus Radar</p>
-              <h2 class="section-mini-title">内容趋势雷达</h2>
+              <p class="eyebrow-light">Campus Radar</p>
+              <h2 class="section-mini-title text-slate-900">今天校园在聊什么</h2>
             </div>
-            <span class="text-xs text-white/35">Live</span>
+            <span class="rounded-full bg-rose-100 px-2.5 py-1 text-[11px] text-rose-500">热聊</span>
           </div>
 
           <div class="mt-6 space-y-4">
-            <div v-for="item in spotlightItems" :key="item.label" class="rounded-2xl border border-white/6 bg-white/[0.03] p-4">
+            <div v-for="item in spotlightItems" :key="item.label" class="rounded-2xl bg-white p-4 shadow-sm">
               <div class="flex items-start justify-between gap-4">
                 <div>
-                  <p class="text-sm font-semibold text-white">{{ item.label }}</p>
-                  <p class="mt-1 text-xs leading-6 text-white/45">{{ item.desc }}</p>
+                  <p class="text-sm font-semibold text-slate-800">{{ item.label }}</p>
+                  <p class="mt-1 text-xs leading-6 text-slate-500">{{ item.desc }}</p>
                 </div>
-                <span class="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-accent-100/80">{{ item.value }}</span>
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] text-slate-500">{{ item.value }}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="panel-glass rounded-[28px] p-6">
-          <p class="eyebrow">Editor’s Note</p>
-          <h2 class="section-mini-title">适合校园站点的成熟方向</h2>
-          <ul class="mt-5 space-y-4 text-sm leading-7 text-white/58">
-            <li>• 头部区域必须承担品牌识别、价值表达与行动转化。</li>
-            <li>• 首页不能只是文章列表，要有“焦点内容 + 流式内容 + 栏目入口”。</li>
-            <li>• 学生内容平台要同时服务“阅读者”和“投稿者”。</li>
-            <li>• 视觉上要像成熟内容品牌，而不是通用后台模板。</li>
+        <div class="panel-youth rounded-[30px] p-6">
+          <p class="eyebrow-light">Why this version</p>
+          <h2 class="section-mini-title text-slate-900">这次更年轻的核心思路</h2>
+          <ul class="mt-5 space-y-4 text-sm leading-7 text-slate-600">
+            <li>• 首页要像“校园内容社区”，而不是正式新闻门户。</li>
+            <li>• 颜色更轻快，阅读门槛更低，更愿意停留。</li>
+            <li>• 卡片更像动态流，栏目更像兴趣入口。</li>
+            <li>• 保留设计感，但不能有距离感。</li>
           </ul>
         </div>
       </aside>
     </section>
 
-    <section id="campus-highlights" class="grid gap-6 xl:grid-cols-[1.4fr_1fr] xl:gap-8">
-      <div class="rounded-[30px] border border-white/8 bg-white/[0.03] p-6 sm:p-8">
+    <section id="campus-highlights" class="grid gap-6 xl:grid-cols-[1.42fr_1fr] xl:gap-8">
+      <div class="panel-youth rounded-[32px] p-6 sm:p-8">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p class="eyebrow">Featured Story</p>
-            <h2 class="section-title">校园焦点故事</h2>
-            <p class="mt-2 max-w-2xl text-sm leading-7 text-white/50">
-              参考成熟高校新闻站的做法：首页必须给一条视觉主故事，让访客第一眼就感到“这里有内容值得点进去”。
+            <p class="eyebrow-light">Featured Drop</p>
+            <h2 class="section-title text-slate-900">今日焦点</h2>
+            <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-500">
+              第一屏还是要有一个真正吸引人的主内容，但表达方式更像“首页推荐位”，而不是严肃头条。
             </p>
           </div>
-          <span class="rounded-full border border-white/10 px-3 py-1 text-xs text-white/45">精选主编推荐</span>
+          <span class="rounded-full bg-pink-100 px-3 py-1 text-xs text-pink-500">正在推荐</span>
         </div>
 
-        <div v-if="featuredPost" class="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <router-link :to="`/post/${featuredPost.id}`" class="overflow-hidden rounded-[26px] border border-white/8 bg-neutral-900/80">
+        <div v-if="featuredPost" class="mt-8 grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
+          <router-link :to="`/post/${featuredPost.id}`" class="overflow-hidden rounded-[28px] bg-white shadow-sm">
             <div v-if="featuredPost.cover_image" class="h-full min-h-[320px]">
               <LazyImage
                 :src="featuredPost.cover_image"
@@ -108,75 +109,67 @@
                 aspect-ratio="4/3"
               />
             </div>
-            <div v-else class="flex h-full min-h-[320px] items-center justify-center bg-[linear-gradient(135deg,_rgba(168,115,85,0.24),_rgba(58,130,104,0.16))]">
+            <div v-else class="flex h-full min-h-[320px] items-center justify-center bg-[linear-gradient(135deg,_rgba(255,191,211,0.65),_rgba(177,226,255,0.68))]">
               <span class="text-8xl">{{ getCategoryIcon(featuredPost.category) }}</span>
             </div>
           </router-link>
 
-          <div class="flex flex-col justify-between rounded-[26px] border border-white/8 bg-white/[0.03] p-6 sm:p-7">
+          <div class="flex flex-col justify-between rounded-[28px] bg-white p-6 sm:p-7 shadow-sm">
             <div>
-              <div class="flex flex-wrap items-center gap-3 text-xs text-white/45">
-                <span class="rounded-full border border-accent-300/20 bg-accent-500/10 px-3 py-1 text-accent-100">{{ featuredPost.category }}</span>
+              <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                <span class="rounded-full bg-gradient-to-r from-pink-100 to-orange-100 px-3 py-1 text-pink-600">{{ featuredPost.category }}</span>
                 <span>{{ formatDate(featuredPost.created_at) }}</span>
                 <span>{{ featuredPost.views }} 浏览</span>
               </div>
               <router-link :to="`/post/${featuredPost.id}`">
-                <h3 class="mt-5 font-display text-3xl leading-tight text-white sm:text-[2.1rem]">{{ featuredPost.title }}</h3>
+                <h3 class="mt-5 font-display text-3xl leading-tight text-slate-900 sm:text-[2.1rem]">{{ featuredPost.title }}</h3>
               </router-link>
-              <p class="mt-5 text-sm leading-8 text-white/58">
+              <p class="mt-5 text-sm leading-8 text-slate-600">
                 {{ stripHtml(featuredPost.content, 180) }}
               </p>
             </div>
 
             <div class="mt-8 space-y-5">
-              <router-link :to="`/user/${featuredPost.author_id}`" class="flex items-center gap-3 text-sm text-white/65 transition hover:text-white">
+              <router-link :to="`/user/${featuredPost.author_id}`" class="flex items-center gap-3 text-sm text-slate-600 transition hover:text-slate-900">
                 <img
                   :src="featuredPost.author_avatar || `${gradientAvatar(featuredPost.author_name)}`"
-                  class="h-11 w-11 rounded-full ring-2 ring-white/10"
+                  class="h-11 w-11 rounded-full ring-2 ring-white"
                 />
                 <div>
-                  <p class="font-semibold text-white">{{ featuredPost.author_name }}</p>
-                  <p class="text-xs text-white/40">校园主笔 / 内容创作者</p>
+                  <p class="font-semibold text-slate-800">{{ featuredPost.author_name }}</p>
+                  <p class="text-xs text-slate-400">校园人气创作者</p>
                 </div>
               </router-link>
 
-              <div class="flex flex-wrap gap-3 text-xs text-white/45">
-                <span class="info-pill">❤️ {{ featuredPost.likes }} 点赞</span>
-                <span class="info-pill">💬 {{ featuredPost.comment_count }} 评论</span>
-                <span class="info-pill">📚 深度阅读</span>
+              <div class="flex flex-wrap gap-3 text-xs text-slate-500">
+                <span class="info-pill-light">❤️ {{ featuredPost.likes }} 点赞</span>
+                <span class="info-pill-light">💬 {{ featuredPost.comment_count }} 评论</span>
+                <span class="info-pill-light">🔥 今日推荐</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="rounded-[30px] border border-white/8 bg-white/[0.03] p-6 sm:p-8" id="campus-radar">
+      <div class="panel-youth rounded-[32px] p-6 sm:p-8" id="campus-radar">
         <div class="flex items-center justify-between gap-4">
           <div>
-            <p class="eyebrow">Trending Sections</p>
-            <h2 class="section-title !text-2xl">栏目入口</h2>
+            <p class="eyebrow-light">Categories</p>
+            <h2 class="section-title !text-2xl text-slate-900">逛你感兴趣的</h2>
           </div>
-          <span class="text-xs text-white/35">Curated</span>
+          <span class="text-xs text-slate-400">Explore</span>
         </div>
 
         <div class="mt-7 flex flex-wrap gap-3">
           <button
             @click="currentCategory = null"
-            :class="[
-              'filter-chip',
-              currentCategory === null ? 'filter-chip-active' : 'filter-chip-idle'
-            ]"
-          >
-            全部栏目
-          </button>
+            :class="['filter-chip-light', currentCategory === null ? 'filter-chip-light-active' : 'filter-chip-light-idle']"
+          >全部</button>
           <button
             v-for="cat in categories"
             :key="cat.id"
             @click="currentCategory = cat.name"
-            :class="[
-              'filter-chip',
-              currentCategory === cat.name ? 'filter-chip-active' : 'filter-chip-idle'
-            ]"
+            :class="['filter-chip-light', currentCategory === cat.name ? 'filter-chip-light-active' : 'filter-chip-light-idle']"
           >
             <span>{{ cat.icon }}</span>
             <span>{{ cat.name }}</span>
@@ -184,17 +177,17 @@
         </div>
 
         <div class="mt-8 space-y-4">
-          <div v-for="cat in categoryInsights" :key="cat.name" class="rounded-2xl border border-white/6 bg-neutral-950/40 p-4">
+          <div v-for="cat in categoryInsights" :key="cat.name" class="rounded-2xl bg-white p-4 shadow-sm">
             <div class="flex items-center justify-between gap-4">
               <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 text-xl">{{ cat.icon }}</div>
+                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-sky-100 text-xl">{{ cat.icon }}</div>
                 <div>
-                  <p class="text-sm font-semibold text-white">{{ cat.name }}</p>
-                  <p class="text-xs text-white/40">{{ cat.count }} 篇内容 · {{ cat.label }}</p>
+                  <p class="text-sm font-semibold text-slate-800">{{ cat.name }}</p>
+                  <p class="text-xs text-slate-400">{{ cat.count }} 条内容 · {{ cat.label }}</p>
                 </div>
               </div>
-              <div class="h-2 w-20 overflow-hidden rounded-full bg-white/8">
-                <div class="h-full rounded-full bg-gradient-to-r from-primary-400 to-accent-400" :style="{ width: `${cat.ratio}%` }"></div>
+              <div class="h-2 w-20 overflow-hidden rounded-full bg-slate-100">
+                <div class="h-full rounded-full bg-gradient-to-r from-pink-400 to-sky-400" :style="{ width: `${cat.ratio}%` }"></div>
               </div>
             </div>
           </div>
@@ -202,27 +195,27 @@
       </div>
     </section>
 
-    <section id="story-stream" class="rounded-[30px] border border-white/8 bg-white/[0.03] p-6 sm:p-8">
+    <section id="story-stream" class="panel-youth rounded-[32px] p-6 sm:p-8">
       <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p class="eyebrow">Story Stream</p>
-          <h2 class="section-title">校园内容流</h2>
-          <p class="mt-2 max-w-3xl text-sm leading-7 text-white/50">
-            这里借鉴成熟内容站的“编辑精选 + 瀑布内容流”思路，让首页既保留氛围感，也具备实用的浏览效率。
+          <p class="eyebrow-light">Story Stream</p>
+          <h2 class="section-title text-slate-900">校园动态流</h2>
+          <p class="mt-2 max-w-3xl text-sm leading-7 text-slate-500">
+            这一屏就是要让人开始往下逛。少一点“严肃浏览”，多一点“这个也想点、那个也想看”。
           </p>
         </div>
-          <div class="flex items-center gap-3 text-xs text-white/40">
-            <span class="rounded-full border border-white/8 px-3 py-1">共 {{ totalPostCount }} 篇内容</span>
-            <span class="rounded-full border border-white/8 px-3 py-1">第 {{ currentPage }} / {{ totalPages || 1 }} 页</span>
-          </div>
+        <div class="flex items-center gap-3 text-xs text-slate-400">
+          <span class="rounded-full bg-white px-3 py-1 shadow-sm">共 {{ totalPostCount }} 条内容</span>
+          <span class="rounded-full bg-white px-3 py-1 shadow-sm">第 {{ currentPage }} / {{ totalPages || 1 }} 页</span>
+        </div>
       </div>
 
       <HomeSkeleton v-if="loading" class="mt-8" />
 
-      <div v-else-if="posts.length === 0" class="mt-8 rounded-[26px] border border-white/8 bg-neutral-950/40 px-6 py-16 text-center">
+      <div v-else-if="posts.length === 0" class="mt-8 rounded-[26px] bg-white px-6 py-16 text-center shadow-sm">
         <div class="text-6xl">📭</div>
-        <p class="mt-4 text-lg font-medium text-white">这里暂时还没有内容</p>
-        <p class="mt-2 text-sm text-white/40">等第一批校园故事上线后，这里会变得很热闹。</p>
+        <p class="mt-4 text-lg font-medium text-slate-700">这里暂时还没有内容</p>
+        <p class="mt-2 text-sm text-slate-400">等第一批校园故事上线后，这里会热闹起来。</p>
       </div>
 
       <div v-else class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
@@ -230,11 +223,11 @@
           <article
             v-for="(post, index) in regularPosts"
             :key="post.id"
-            class="story-card animate-in"
+            class="story-card-light animate-in"
             :style="{ animationDelay: `${index * 0.05}s` }"
           >
             <router-link :to="`/post/${post.id}`" class="block">
-              <div v-if="post.cover_image" class="overflow-hidden rounded-[24px] border border-white/10 bg-neutral-900/80">
+              <div v-if="post.cover_image" class="overflow-hidden rounded-[24px] bg-slate-100">
                 <LazyImage
                   :src="post.cover_image"
                   :alt="post.title"
@@ -242,40 +235,40 @@
                   aspect-ratio="16/10"
                 />
               </div>
-              <div v-else class="flex h-56 items-center justify-center rounded-[24px] border border-white/10 bg-[linear-gradient(135deg,_rgba(58,130,104,0.16),_rgba(168,115,85,0.16))] text-7xl">
+              <div v-else class="flex h-56 items-center justify-center rounded-[24px] bg-[linear-gradient(135deg,_rgba(255,196,211,0.68),_rgba(178,223,255,0.72))] text-7xl">
                 {{ getCategoryIcon(post.category) }}
               </div>
             </router-link>
 
             <div class="mt-5">
-              <div class="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/35">
-                <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/55">{{ post.category }}</span>
+              <div class="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-500">{{ post.category }}</span>
                 <span>{{ formatDate(post.created_at) }}</span>
               </div>
 
               <router-link :to="`/post/${post.id}`">
-                <h3 class="mt-4 line-clamp-2 font-display text-2xl leading-tight text-white transition-colors hover:text-accent-100">
+                <h3 class="mt-4 line-clamp-2 font-display text-2xl leading-tight text-slate-900 transition-colors hover:text-pink-500">
                   {{ post.title }}
                 </h3>
               </router-link>
 
-              <p class="mt-4 line-clamp-3 text-sm leading-7 text-white/52">
+              <p class="mt-4 line-clamp-3 text-sm leading-7 text-slate-500">
                 {{ stripHtml(post.content, 138) }}
               </p>
 
-              <div class="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
+              <div class="mt-6 flex items-center justify-between gap-4 border-t border-slate-100 pt-5">
                 <router-link :to="`/user/${post.author_id}`" class="flex min-w-0 items-center gap-3">
                   <img
                     :src="post.author_avatar || `${gradientAvatar(post.author_name)}`"
-                    class="h-9 w-9 rounded-full ring-2 ring-white/10"
+                    class="h-9 w-9 rounded-full ring-2 ring-white"
                   />
                   <div class="min-w-0">
-                    <p class="truncate text-sm font-medium text-white/78">{{ post.author_name }}</p>
-                    <p class="text-xs text-white/32">学生作者</p>
+                    <p class="truncate text-sm font-medium text-slate-700">{{ post.author_name }}</p>
+                    <p class="text-xs text-slate-400">在分享校园生活</p>
                   </div>
                 </router-link>
 
-                <div class="flex items-center gap-3 text-xs text-white/36">
+                <div class="flex items-center gap-3 text-xs text-slate-400">
                   <span>{{ post.views }} 阅读</span>
                   <span>{{ post.likes }} ❤</span>
                 </div>
@@ -285,38 +278,38 @@
         </div>
 
         <aside class="space-y-5">
-          <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
-            <p class="eyebrow">Top Authors</p>
-            <h3 class="section-title !text-2xl">热门作者</h3>
+          <div class="rounded-[28px] bg-white p-6 shadow-sm">
+            <p class="eyebrow-light">Top Authors</p>
+            <h3 class="section-title !text-2xl text-slate-900">人气作者</h3>
             <div class="mt-6 space-y-4">
               <router-link
                 v-for="author in topAuthors"
                 :key="author.author_id"
                 :to="`/user/${author.author_id}`"
-                class="flex items-center gap-3 rounded-2xl border border-white/8 bg-neutral-950/35 p-3 transition hover:bg-[#111319]/82"
+                class="flex items-center gap-3 rounded-2xl bg-slate-50 p-3 transition hover:bg-pink-50"
               >
-                <img :src="author.author_avatar || `${gradientAvatar(author.author_name)}`" class="h-11 w-11 rounded-full ring-2 ring-white/10" />
+                <img :src="author.author_avatar || `${gradientAvatar(author.author_name)}`" class="h-11 w-11 rounded-full ring-2 ring-white" />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm font-semibold text-white">{{ author.author_name }}</p>
-                  <p class="text-xs text-white/35">{{ author.posts }} 篇文章 · {{ author.totalViews }} 阅读</p>
+                  <p class="truncate text-sm font-semibold text-slate-800">{{ author.author_name }}</p>
+                  <p class="text-xs text-slate-400">{{ author.posts }} 篇文章 · {{ author.totalViews }} 阅读</p>
                 </div>
               </router-link>
             </div>
           </div>
 
-          <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
-            <p class="eyebrow">Editor Picks</p>
-            <h3 class="section-title !text-2xl">编辑推荐</h3>
+          <div class="rounded-[28px] bg-white p-6 shadow-sm">
+            <p class="eyebrow-light">Editor Picks</p>
+            <h3 class="section-title !text-2xl text-slate-900">随手推荐</h3>
             <div class="mt-5 space-y-4">
               <router-link
                 v-for="pick in editorPicks"
                 :key="pick.id"
                 :to="`/post/${pick.id}`"
-                class="block rounded-2xl border border-white/8 bg-neutral-950/35 p-4 transition hover:bg-[#111319]/82"
+                class="block rounded-2xl bg-slate-50 p-4 transition hover:bg-orange-50"
               >
-                <p class="text-xs uppercase tracking-[0.16em] text-white/28">{{ pick.category }}</p>
-                <h4 class="mt-2 line-clamp-2 font-display text-xl text-white">{{ pick.title }}</h4>
-                <p class="mt-2 line-clamp-2 text-sm leading-7 text-white/42">{{ stripHtml(pick.content, 72) }}</p>
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-400">{{ pick.category }}</p>
+                <h4 class="mt-2 line-clamp-2 font-display text-xl text-slate-900">{{ pick.title }}</h4>
+                <p class="mt-2 line-clamp-2 text-sm leading-7 text-slate-500">{{ stripHtml(pick.content, 72) }}</p>
               </router-link>
             </div>
           </div>
@@ -324,19 +317,9 @@
       </div>
 
       <div v-if="totalPages > 1" class="mt-10 flex items-center justify-center gap-3">
-        <button
-          @click="currentPage--"
-          :disabled="currentPage === 1"
-          class="pager-btn"
-        >上一页</button>
-        <div class="rounded-full border border-white/8 bg-white/[0.03] px-5 py-2 text-sm text-white/58">
-          第 {{ currentPage }} 页 / 共 {{ totalPages }} 页
-        </div>
-        <button
-          @click="currentPage++"
-          :disabled="currentPage === totalPages"
-          class="pager-btn"
-        >下一页</button>
+        <button @click="currentPage--" :disabled="currentPage === 1" class="pager-btn-light">上一页</button>
+        <div class="rounded-full bg-white px-5 py-2 text-sm text-slate-500 shadow-sm">第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</div>
+        <button @click="currentPage++" :disabled="currentPage === totalPages" class="pager-btn-light">下一页</button>
       </div>
     </section>
   </div>
@@ -365,19 +348,19 @@ const limit = 10
 
 const spotlightItems = computed(() => [
   {
-    label: '本周最活跃栏目',
-    desc: '根据当前文章分类分布形成的首页栏目建议。',
+    label: '今天最热栏目',
+    desc: '按当前首页内容热度计算出的热门方向。',
     value: categoryInsights.value[0]?.name || '待生成'
   },
   {
-    label: '内容形态建议',
-    desc: '校园站需要同时兼顾信息密度和青春氛围。',
-    value: '媒体化'
+    label: '推荐首页气质',
+    desc: '轻快、好逛、有互动感，比传统校园官网更容易停留。',
+    value: '年轻化'
   },
   {
-    label: '推荐首页策略',
-    desc: '焦点故事 + 分类入口 + 内容流，是更成熟的组合。',
-    value: '精选流'
+    label: '适合放大的内容',
+    desc: '活动图集、社团招新、宿舍日常、校园攻略都会更适合。',
+    value: '社区向'
   }
 ])
 
@@ -392,7 +375,7 @@ const categoryInsights = computed(() => {
       ...cat,
       count,
       ratio: Math.max(12, Math.min(100, Math.round((count / total) * 100) || 12)),
-      label: count === 0 ? '等待内容补位' : count >= 3 ? '热度较高' : '持续更新中'
+      label: count === 0 ? '刚刚起步' : count >= 3 ? '大家都在看' : '有人在发'
     }
   }).sort((a, b) => b.count - a.count).slice(0, 4)
 })
@@ -459,8 +442,8 @@ const formatDate = (dateStr) => {
   const diff = now - date
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
-  if (days === 0) return '今天发布'
-  if (days === 1) return '昨天发布'
+  if (days === 0) return '今天'
+  if (days === 1) return '昨天'
   if (days < 7) return `${days} 天前`
 
   return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })

@@ -225,62 +225,102 @@
         <p class="mt-2 text-sm text-white/40">等第一批校园故事上线后，这里会变得很热闹。</p>
       </div>
 
-      <div v-else class="mt-8 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-        <article
-          v-for="(post, index) in regularPosts"
-          :key="post.id"
-          class="story-card animate-in"
-          :style="{ animationDelay: `${index * 0.05}s` }"
-        >
-          <router-link :to="`/post/${post.id}`" class="block">
-            <div v-if="post.cover_image" class="overflow-hidden rounded-[24px] border border-white/8 bg-neutral-900/80">
-              <LazyImage
-                :src="post.cover_image"
-                :alt="post.title"
-                img-class="h-56 w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
-                aspect-ratio="16/10"
-              />
-            </div>
-            <div v-else class="flex h-56 items-center justify-center rounded-[24px] border border-white/8 bg-[linear-gradient(135deg,_rgba(58,130,104,0.16),_rgba(168,115,85,0.16))] text-7xl">
-              {{ getCategoryIcon(post.category) }}
-            </div>
-          </router-link>
-
-          <div class="mt-5">
-            <div class="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/35">
-              <span class="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1 text-white/55">{{ post.category }}</span>
-              <span>{{ formatDate(post.created_at) }}</span>
-            </div>
-
-            <router-link :to="`/post/${post.id}`">
-              <h3 class="mt-4 line-clamp-2 font-display text-2xl leading-tight text-white transition-colors hover:text-accent-100">
-                {{ post.title }}
-              </h3>
+      <div v-else class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <div class="grid gap-5 lg:grid-cols-2">
+          <article
+            v-for="(post, index) in regularPosts"
+            :key="post.id"
+            class="story-card animate-in"
+            :style="{ animationDelay: `${index * 0.05}s` }"
+          >
+            <router-link :to="`/post/${post.id}`" class="block">
+              <div v-if="post.cover_image" class="overflow-hidden rounded-[24px] border border-white/10 bg-neutral-900/80">
+                <LazyImage
+                  :src="post.cover_image"
+                  :alt="post.title"
+                  img-class="h-56 w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
+                  aspect-ratio="16/10"
+                />
+              </div>
+              <div v-else class="flex h-56 items-center justify-center rounded-[24px] border border-white/10 bg-[linear-gradient(135deg,_rgba(58,130,104,0.16),_rgba(168,115,85,0.16))] text-7xl">
+                {{ getCategoryIcon(post.category) }}
+              </div>
             </router-link>
 
-            <p class="mt-4 line-clamp-3 text-sm leading-7 text-white/52">
-              {{ stripHtml(post.content, 138) }}
-            </p>
+            <div class="mt-5">
+              <div class="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/35">
+                <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/55">{{ post.category }}</span>
+                <span>{{ formatDate(post.created_at) }}</span>
+              </div>
 
-            <div class="mt-6 flex items-center justify-between gap-4 border-t border-white/8 pt-5">
-              <router-link :to="`/user/${post.author_id}`" class="flex min-w-0 items-center gap-3">
-                <img
-                  :src="post.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author_name}`"
-                  class="h-9 w-9 rounded-full ring-2 ring-white/10"
-                />
-                <div class="min-w-0">
-                  <p class="truncate text-sm font-medium text-white/78">{{ post.author_name }}</p>
-                  <p class="text-xs text-white/32">学生作者</p>
-                </div>
+              <router-link :to="`/post/${post.id}`">
+                <h3 class="mt-4 line-clamp-2 font-display text-2xl leading-tight text-white transition-colors hover:text-accent-100">
+                  {{ post.title }}
+                </h3>
               </router-link>
 
-              <div class="flex items-center gap-3 text-xs text-white/36">
-                <span>{{ post.views }} 阅读</span>
-                <span>{{ post.likes }} ❤</span>
+              <p class="mt-4 line-clamp-3 text-sm leading-7 text-white/52">
+                {{ stripHtml(post.content, 138) }}
+              </p>
+
+              <div class="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
+                <router-link :to="`/user/${post.author_id}`" class="flex min-w-0 items-center gap-3">
+                  <img
+                    :src="post.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author_name}`"
+                    class="h-9 w-9 rounded-full ring-2 ring-white/10"
+                  />
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-medium text-white/78">{{ post.author_name }}</p>
+                    <p class="text-xs text-white/32">学生作者</p>
+                  </div>
+                </router-link>
+
+                <div class="flex items-center gap-3 text-xs text-white/36">
+                  <span>{{ post.views }} 阅读</span>
+                  <span>{{ post.likes }} ❤</span>
+                </div>
               </div>
             </div>
+          </article>
+        </div>
+
+        <aside class="space-y-5">
+          <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
+            <p class="eyebrow">Top Authors</p>
+            <h3 class="section-title !text-2xl">热门作者</h3>
+            <div class="mt-6 space-y-4">
+              <router-link
+                v-for="author in topAuthors"
+                :key="author.author_id"
+                :to="`/user/${author.author_id}`"
+                class="flex items-center gap-3 rounded-2xl border border-white/8 bg-neutral-950/35 p-3 transition hover:bg-neutral-950/55"
+              >
+                <img :src="author.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.author_name}`" class="h-11 w-11 rounded-full ring-2 ring-white/10" />
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-semibold text-white">{{ author.author_name }}</p>
+                  <p class="text-xs text-white/35">{{ author.posts }} 篇文章 · {{ author.totalViews }} 阅读</p>
+                </div>
+              </router-link>
+            </div>
           </div>
-        </article>
+
+          <div class="rounded-[28px] border border-white/8 bg-white/[0.03] p-6">
+            <p class="eyebrow">Editor Picks</p>
+            <h3 class="section-title !text-2xl">编辑推荐</h3>
+            <div class="mt-5 space-y-4">
+              <router-link
+                v-for="pick in editorPicks"
+                :key="pick.id"
+                :to="`/post/${pick.id}`"
+                class="block rounded-2xl border border-white/8 bg-neutral-950/35 p-4 transition hover:bg-neutral-950/55"
+              >
+                <p class="text-xs uppercase tracking-[0.16em] text-white/28">{{ pick.category }}</p>
+                <h4 class="mt-2 line-clamp-2 font-display text-xl text-white">{{ pick.title }}</h4>
+                <p class="mt-2 line-clamp-2 text-sm leading-7 text-white/42">{{ stripHtml(pick.content, 72) }}</p>
+              </router-link>
+            </div>
+          </div>
+        </aside>
       </div>
 
       <div v-if="totalPages > 1" class="mt-10 flex items-center justify-center gap-3">
@@ -354,6 +394,31 @@ const categoryInsights = computed(() => {
       label: count === 0 ? '等待内容补位' : count >= 3 ? '热度较高' : '持续更新中'
     }
   }).sort((a, b) => b.count - a.count).slice(0, 4)
+})
+
+const topAuthors = computed(() => {
+  const map = new Map()
+  posts.value.forEach((post) => {
+    if (!map.has(post.author_id)) {
+      map.set(post.author_id, {
+        author_id: post.author_id,
+        author_name: post.author_name,
+        author_avatar: post.author_avatar,
+        posts: 0,
+        totalViews: 0
+      })
+    }
+    const item = map.get(post.author_id)
+    item.posts += 1
+    item.totalViews += post.views || 0
+  })
+  return Array.from(map.values()).sort((a, b) => (b.posts + b.totalViews) - (a.posts + a.totalViews)).slice(0, 4)
+})
+
+const editorPicks = computed(() => {
+  return [...posts.value]
+    .sort((a, b) => ((b.likes || 0) + (b.comment_count || 0) * 2 + (b.views || 0) * 0.05) - ((a.likes || 0) + (a.comment_count || 0) * 2 + (a.views || 0) * 0.05))
+    .slice(0, 3)
 })
 
 const fetchCategories = async () => {

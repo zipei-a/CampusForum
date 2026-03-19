@@ -60,4 +60,9 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+// 路由切换后滚动到顶部
+router.afterEach(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+})
+
 export default router

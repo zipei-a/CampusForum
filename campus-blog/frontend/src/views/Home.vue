@@ -74,13 +74,18 @@
         </div>
 
         <div class="panel-youth rounded-[30px] p-6">
-          <p class="eyebrow-light">Why this version</p>
-          <h2 class="section-mini-title text-slate-900">这次更年轻的核心思路</h2>
-          <ul class="mt-5 space-y-4 text-sm leading-7 text-slate-600">
-            <li>• 首页要像“校园内容社区”，而不是正式新闻门户。</li>
-            <li>• 颜色更轻快，阅读门槛更低，更愿意停留。</li>
-            <li>• 卡片更像动态流，栏目更像兴趣入口。</li>
-            <li>• 保留设计感，但不能有距离感。</li>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="eyebrow-light">Hot Picks</p>
+              <h2 class="section-mini-title text-slate-900">适合放大的内容</h2>
+            </div>
+            <span class="rounded-full bg-sky-100 px-2.5 py-1 text-[11px] text-sky-500">社区向</span>
+          </div>
+          <ul class="mt-5 space-y-3">
+            <li class="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm text-sm text-slate-700">🎉 活动图集</li>
+            <li class="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm text-sm text-slate-700">📣 社团招新</li>
+            <li class="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm text-sm text-slate-700">🛏️ 宿舍日常</li>
+            <li class="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm text-sm text-slate-700">🗺️ 校园攻略</li>
           </ul>
         </div>
       </aside>
@@ -92,9 +97,6 @@
           <div>
             <p class="eyebrow-light">Featured Drop</p>
             <h2 class="section-title text-slate-900">今日焦点</h2>
-            <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-500">
-              第一屏还是要有一个真正吸引人的主内容，但表达方式更像“首页推荐位”，而不是严肃头条。
-            </p>
           </div>
           <span class="rounded-full bg-pink-100 px-3 py-1 text-xs text-pink-500">正在推荐</span>
         </div>
@@ -200,9 +202,6 @@
         <div>
           <p class="eyebrow-light">Story Stream</p>
           <h2 class="section-title text-slate-900">校园动态流</h2>
-          <p class="mt-2 max-w-3xl text-sm leading-7 text-slate-500">
-            这一屏就是要让人开始往下逛。少一点“严肃浏览”，多一点“这个也想点、那个也想看”。
-          </p>
         </div>
         <div class="flex items-center gap-3 text-xs text-slate-400">
           <span class="rounded-full bg-white px-3 py-1 shadow-sm">共 {{ totalPostCount }} 条内容</span>
@@ -453,13 +452,19 @@ const stripHtml = (html, length = 120) => {
   return html?.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().substring(0, length) || ''
 }
 
-watch([currentCategory, currentPage], fetchPosts)
+watch([currentCategory, currentPage], ([, newPage], [, oldPage]) => {
+  fetchPosts()
+  if (newPage !== oldPage) {
+    document.getElementById('story-stream')?.scrollIntoView({ behavior: 'smooth' })
+  }
+})
 watch(() => route.query.search, () => {
   currentPage.value = 1
   fetchPosts()
 })
 
 onMounted(async () => {
+  document.title = '校园博客 - 首页'
   await Promise.all([fetchCategories(), fetchPosts()])
 })
 </script>

@@ -1,11 +1,30 @@
 <template>
+  <div>
+  <!-- 阅读进度条 -->
+  <div class="fixed top-0 left-0 z-50 h-1 bg-gradient-to-r from-pink-400 to-sky-400 transition-all duration-150" :style="{ width: readingProgress + '%' }"></div>
+
+  <!-- 回到顶部按钮 -->
+  <Transition name="fade">
+    <button
+      v-if="showBackTop"
+      @click="backToTop"
+      class="fixed bottom-8 right-8 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur border border-white/20 text-white shadow-lg hover:bg-white/20 transition-all"
+      title="回到顶部"
+    >↑</button>
+  </Transition>
+
+  <!-- 复制链接 Toast -->
+  <Transition name="fade">
+    <div v-if="linkCopied" class="fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-green-500 px-5 py-2 text-sm text-white shadow-lg">已复制链接！</div>
+  </Transition>
+
   <div class="mx-auto max-w-6xl">
     <div v-if="loading" class="py-24 text-center">
       <div class="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-white/12 border-t-accent-300"></div>
       <p class="mt-4 text-sm text-white/45">正在加载文章内容…</p>
     </div>
 
-    <template v-else-if="post">
+    <div v-else-if="post">
       <section class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
         <article class="overflow-hidden rounded-[32px] border border-white/8 bg-white/[0.03] shadow-[0_24px_100px_rgba(0,0,0,0.3)]">
           <div class="relative overflow-hidden border-b border-white/8">
@@ -118,6 +137,11 @@
                   <span>{{ post.likes }} 人点赞</span>
                   <span>·</span>
                   <span>{{ comments.length }} 条评论</span>
+                  <span>·</span>
+                  <button @click="shareLink" class="inline-flex items-center gap-1 rounded-full px-3 py-1 bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] transition-all text-white/60 hover:text-white/80">
+                    <span>🔗</span>
+                    <span>分享</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -206,16 +230,17 @@
           </div>
         </aside>
       </section>
-    </template>
+    </div>
 
     <div v-else class="py-24 text-center text-white/45">
       文章不存在。
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/utils/api'
 import { useUserStore } from '@/stores/user'
@@ -371,7 +396,45 @@ const formatContent = (content) => {
     .replace(/$/, '</p>')
 }
 
+
+const handleScroll = () => {
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+  const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+  readingProgress.value = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0
+  showBackTop.value = scrollTop > 400
+}
+
+const backToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const shareLink = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href)
+    linkCopied.value = true
+    setTimeout(() => { linkCopied.value = false }, 2000)
+  } catch {
+    // fallback
+    const input = document.createElement('input')
+    input.value = window.location.href
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    document.body.removeChild(input)
+    linkCopied.value = true
+    setTimeout(() => { linkCopied.value = false }, 2000)
+  }
+}
+
 onMounted(async () => {
   await Promise.all([fetchPost(), fetchComments()])
+  if (post.value?.title) {
+    document.title = `${post.value.title} - 校园博客`
+  }
+  window.addEventListener('scroll', handleScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>

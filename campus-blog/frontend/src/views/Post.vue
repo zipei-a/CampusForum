@@ -52,7 +52,7 @@
               <div class="flex flex-col gap-5 border-b border-white/8 pb-8 sm:flex-row sm:items-center sm:justify-between">
                 <router-link :to="`/user/${post.author_id}`" class="flex items-center gap-4">
                   <img
-                    :src="post.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author_name}`"
+                    :src="post.author_avatar || `${gradientAvatar(post.author_name)}`"
                     class="h-14 w-14 rounded-full ring-2 ring-white/10"
                     loading="lazy"
                   />
@@ -156,7 +156,7 @@
               <textarea
                 v-model="newComment"
                 placeholder="写下你的看法、共鸣或者补充…"
-                class="min-h-[120px] w-full rounded-3xl border border-white/10 bg-neutral-950/55 px-5 py-4 text-sm leading-7 text-white placeholder:text-white/25 focus:border-accent-300/35 focus:outline-none"
+                class="min-h-[120px] w-full rounded-3xl border border-white/10 bg-[#111319]/82 px-5 py-4 text-sm leading-7 text-white placeholder:text-white/25 focus:border-accent-300/35 focus:outline-none"
               ></textarea>
               <button
                 @click="submitComment"
@@ -176,7 +176,7 @@
               <div v-for="comment in comments" :key="comment.id" class="rounded-3xl border border-white/8 bg-neutral-950/35 p-5">
                 <div class="flex gap-4">
                   <img
-                    :src="comment.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.username}`"
+                    :src="comment.avatar || `${gradientAvatar(comment.username)}`"
                     class="h-10 w-10 rounded-full ring-2 ring-white/10"
                     loading="lazy"
                   />
@@ -220,6 +220,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '@/utils/api'
 import { useUserStore } from '@/stores/user'
 import LazyImage from '@/components/LazyImage.vue'
+import { gradientAvatar } from '@/utils/avatar'
 
 const route = useRoute()
 const router = useRouter()

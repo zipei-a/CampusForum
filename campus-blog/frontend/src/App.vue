@@ -6,7 +6,7 @@
       <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
     </div>
 
-    <header class="sticky top-0 z-50 border-b border-white/10 bg-neutral-950/72 backdrop-blur-xl supports-[backdrop-filter]:bg-neutral-950/62">
+    <header class="sticky top-0 z-50 border-b border-white/10 bg-[#111319]/92  supports-[backdrop-filter]:bg-[#111319]/88">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex h-20 items-center justify-between gap-4">
           <router-link to="/" class="group flex items-center gap-4 min-w-0">
@@ -51,7 +51,7 @@
               <div class="relative" ref="userMenuRef">
                 <button @click="showUserMenu = !showUserMenu" class="group flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-2.5 py-2 text-left transition-all hover:bg-white/10">
                   <img
-                    :src="userStore.user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userStore.user.username}`"
+                    :src="userStore.user.avatar || `${gradientAvatar(userStore.user.username)}`"
                     class="h-9 w-9 rounded-full object-cover ring-2 ring-white/10 transition-all group-hover:ring-accent-200/40"
                   />
                   <div class="hidden md:block">
@@ -60,7 +60,7 @@
                   </div>
                 </button>
 
-                <div v-if="showUserMenu" class="absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/96 shadow-2xl shadow-black/50 backdrop-blur-xl animate-in">
+                <div v-if="showUserMenu" class="absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border border-white/10 bg-[#171a22] shadow-2xl shadow-black/50  animate-in">
                   <div class="border-b border-white/8 px-5 py-4">
                     <p class="font-semibold text-white">{{ userStore.user.username }}</p>
                     <p class="mt-1 truncate text-xs text-white/45">{{ userStore.user.email }}</p>
@@ -99,7 +99,7 @@
       </router-view>
     </main>
 
-    <footer class="relative z-10 mt-20 border-t border-white/8 bg-neutral-950/55 backdrop-blur-sm">
+    <footer class="relative z-10 mt-20 border-t border-white/8 bg-[#111319]/82 ">
       <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div class="grid gap-10 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div class="max-w-xl">
@@ -145,6 +145,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from './stores/user'
 import { debounce } from './utils/debounce'
+import { gradientAvatar } from './utils/avatar'
 
 const router = useRouter()
 const userStore = useUserStore()

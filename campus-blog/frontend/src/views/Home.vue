@@ -3,8 +3,8 @@
     <section class="grid gap-6 lg:grid-cols-[1.35fr_0.8fr] xl:gap-8">
       <div class="hero-panel relative overflow-hidden rounded-[32px] border border-white/10 px-6 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.12),_transparent_22%),radial-gradient(circle_at_80%_20%,_rgba(58,130,104,0.22),_transparent_25%),linear-gradient(135deg,_rgba(39,31,26,0.96),_rgba(14,14,14,0.88))]"></div>
-        <div class="absolute -right-10 top-8 h-52 w-52 rounded-full bg-accent-300/10 blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-primary-300/10 blur-2xl"></div>
+        <div class="absolute -right-10 top-8 h-52 w-52 rounded-full bg-accent-300/10 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-primary-300/10 blur-xl"></div>
 
         <div class="relative z-10 max-w-2xl">
           <div class="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-white/60">
@@ -131,7 +131,7 @@
             <div class="mt-8 space-y-5">
               <router-link :to="`/user/${featuredPost.author_id}`" class="flex items-center gap-3 text-sm text-white/65 transition hover:text-white">
                 <img
-                  :src="featuredPost.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${featuredPost.author_name}`"
+                  :src="featuredPost.author_avatar || `${gradientAvatar(featuredPost.author_name)}`"
                   class="h-11 w-11 rounded-full ring-2 ring-white/10"
                 />
                 <div>
@@ -266,7 +266,7 @@
               <div class="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
                 <router-link :to="`/user/${post.author_id}`" class="flex min-w-0 items-center gap-3">
                   <img
-                    :src="post.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author_name}`"
+                    :src="post.author_avatar || `${gradientAvatar(post.author_name)}`"
                     class="h-9 w-9 rounded-full ring-2 ring-white/10"
                   />
                   <div class="min-w-0">
@@ -293,9 +293,9 @@
                 v-for="author in topAuthors"
                 :key="author.author_id"
                 :to="`/user/${author.author_id}`"
-                class="flex items-center gap-3 rounded-2xl border border-white/8 bg-neutral-950/35 p-3 transition hover:bg-neutral-950/55"
+                class="flex items-center gap-3 rounded-2xl border border-white/8 bg-neutral-950/35 p-3 transition hover:bg-[#111319]/82"
               >
-                <img :src="author.author_avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.author_name}`" class="h-11 w-11 rounded-full ring-2 ring-white/10" />
+                <img :src="author.author_avatar || `${gradientAvatar(author.author_name)}`" class="h-11 w-11 rounded-full ring-2 ring-white/10" />
                 <div class="min-w-0 flex-1">
                   <p class="truncate text-sm font-semibold text-white">{{ author.author_name }}</p>
                   <p class="text-xs text-white/35">{{ author.posts }} 篇文章 · {{ author.totalViews }} 阅读</p>
@@ -312,7 +312,7 @@
                 v-for="pick in editorPicks"
                 :key="pick.id"
                 :to="`/post/${pick.id}`"
-                class="block rounded-2xl border border-white/8 bg-neutral-950/35 p-4 transition hover:bg-neutral-950/55"
+                class="block rounded-2xl border border-white/8 bg-neutral-950/35 p-4 transition hover:bg-[#111319]/82"
               >
                 <p class="text-xs uppercase tracking-[0.16em] text-white/28">{{ pick.category }}</p>
                 <h4 class="mt-2 line-clamp-2 font-display text-xl text-white">{{ pick.title }}</h4>
@@ -349,6 +349,7 @@ import api from '@/utils/api'
 import { useUserStore } from '@/stores/user'
 import HomeSkeleton from '@/components/HomeSkeleton.vue'
 import LazyImage from '@/components/LazyImage.vue'
+import { gradientAvatar } from '@/utils/avatar'
 
 const route = useRoute()
 const userStore = useUserStore()

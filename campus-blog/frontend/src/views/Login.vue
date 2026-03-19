@@ -29,7 +29,7 @@
         </div>
       </section>
 
-      <section class="rounded-[34px] border border-white/10 bg-neutral-950/78 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.3)] backdrop-blur-xl sm:p-8 lg:p-10">
+      <section class="rounded-[34px] border border-white/10 bg-[#111319] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.3)]  sm:p-8 lg:p-10">
         <div class="mx-auto max-w-md">
           <div class="mb-8">
             <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white shadow-lg">

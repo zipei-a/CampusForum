@@ -19,8 +19,8 @@
       <section class="overflow-hidden rounded-[34px] border border-white/8 bg-white/[0.03] shadow-[0_28px_90px_rgba(0,0,0,0.28)]">
         <div class="relative h-56 overflow-hidden bg-[linear-gradient(135deg,_rgba(168,115,85,0.3),_rgba(58,130,104,0.22),_rgba(20,20,20,0.82))]">
           <div class="absolute inset-0">
-            <div class="absolute -right-16 top-0 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
-            <div class="absolute left-10 bottom-0 h-44 w-44 rounded-full bg-black/10 blur-2xl"></div>
+            <div class="absolute -right-16 top-0 h-64 w-64 rounded-full bg-white/10 blur-xl"></div>
+            <div class="absolute left-10 bottom-0 h-44 w-44 rounded-full bg-black/10 blur-xl"></div>
           </div>
           <div class="absolute right-6 top-6" v-if="isOwner">
             <button class="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/80 transition hover:bg-white/15 hover:text-white">
@@ -33,7 +33,7 @@
           <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div class="flex flex-col gap-5 sm:flex-row sm:items-end -mt-14">
               <img
-                :src="user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`"
+                :src="user.avatar || `${gradientAvatar(user.username)}`"
                 class="h-24 w-24 rounded-full border-4 border-neutral-950 bg-neutral-900 object-cover shadow-xl"
               />
               <div class="pb-2">
@@ -83,7 +83,7 @@
               v-for="post in posts"
               :key="post.id"
               :to="`/post/${post.id}`"
-              class="group flex flex-col gap-5 rounded-[26px] border border-white/8 bg-neutral-950/35 p-5 transition hover:bg-neutral-950/55 lg:flex-row"
+              class="group flex flex-col gap-5 rounded-[26px] border border-white/8 bg-neutral-950/35 p-5 transition hover:bg-[#111319]/82 lg:flex-row"
             >
               <div v-if="post.cover_image" class="h-40 overflow-hidden rounded-[22px] lg:h-28 lg:w-44 lg:flex-shrink-0">
                 <img :src="post.cover_image" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
@@ -141,6 +141,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import api from '@/utils/api'
+import { gradientAvatar } from '@/utils/avatar'
 
 const route = useRoute()
 const userStore = useUserStore()

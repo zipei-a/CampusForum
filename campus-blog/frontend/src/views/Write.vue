@@ -2,7 +2,7 @@
   <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
     <div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
       <section class="overflow-hidden rounded-[34px] border border-white/8 bg-white/[0.03] shadow-[0_30px_90px_rgba(0,0,0,0.28)]">
-        <div class="border-b border-white/8 bg-neutral-950/55 px-6 py-4 backdrop-blur-xl sm:px-8">
+        <div class="border-b border-white/8 bg-[#111319]/82 px-6 py-4  sm:px-8">
           <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex items-center gap-4">
               <router-link to="/" class="inline-flex items-center gap-2 text-sm text-white/42 transition hover:text-white/78">
@@ -32,7 +32,7 @@
                 'group cursor-pointer rounded-[28px] border-2 border-dashed p-10 text-center transition-all duration-300',
                 dragOver
                   ? 'border-accent-300 bg-accent-500/10'
-                  : 'border-white/10 bg-neutral-950/35 hover:border-accent-200/35 hover:bg-neutral-950/55'
+                  : 'border-white/10 bg-neutral-950/35 hover:border-accent-200/35 hover:bg-[#111319]/82'
               ]"
             >
               <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-2xl text-white/65 transition group-hover:bg-white/10">

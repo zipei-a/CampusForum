@@ -23,8 +23,31 @@ const PORT = process.env.PORT || 3000;
 
 // ============ 中间件配置 ============
 
-// CORS 跨域配置
-app.use(cors());
+// CORS 跨域配置 - 收紧配置，只允许已知来源
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  process.env.ALLOWED_ORIGIN
+].filter(Boolean);
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // 允许无 origin 的请求（如直接浏览器访问、curl）
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    // 生产环境严格模式：拒绝未知来源
+    if (process.env.NODE_ENV === 'production') {
+      return callback(new Error('CORS policy violation'), false);
+    }
+    // 开发环境宽松
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // 解析 JSON 请求体
 app.use(express.json());

@@ -4,10 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>帖子详情 - 校园论坛</title>
+  <meta name="description" content="查看重庆邮电大学校园论坛帖子详情，参与讨论与互动。" />
+  <meta property="og:title" content="帖子详情 - 校园论坛" />
+  <meta property="og:description" content="查看重庆邮电大学校园论坛帖子详情，参与讨论与互动。" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#2D6A4F" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="navbar">
+    <!-- 阅读进度条 -->
+  <div id="reading-progress" style="position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#2D6A4F,#52B788);z-index:9999;transition:width 0.1s ease;"></div>
+  <script>
+  (function(){
+    var bar=document.getElementById('reading-progress');
+    if(!bar)return;
+    window.addEventListener('scroll',function(){
+      var scrollTop=window.scrollY||document.documentElement.scrollTop;
+      var docH=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+      bar.style.width=(docH>0?Math.min(100,scrollTop/docH*100):0)+'%';
+    });
+  })();
+  </script>
+<header class="navbar">
     <div class="logo">🎓 校园论坛</div>
     <div class="menu-toggle" id="menu-toggle">
       <span></span>
@@ -31,6 +50,9 @@
         <!-- JS 动态插入帖子详情 -->
       </article>
       
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+        <button id="copy-link-btn" class="btn btn-outline btn-sm" onclick="(function(){navigator.clipboard.writeText(window.location.href).then(function(){var t=document.createElement('div');t.textContent='链接已复制!';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2D6A4F;color:#fff;padding:8px 20px;border-radius:20px;font-size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);';document.body.appendChild(t);setTimeout(function(){t.remove();},2500);});return false;})()">🔗 复制链接分享</button>
+      </div>
       <section id="comments-section" class="card" style="margin-top: 24px;">
         <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">评论</h3>
         <div id="comments-list" class="comment-list"></div>
@@ -52,5 +74,19 @@
   </footer>
 
   <script type="module" src="../JavaScript/detail.js"></script>
+  <!-- 回到顶部按钮 -->
+  <button id="scroll-to-top" title="回到顶部" style="display:none;position:fixed;bottom:32px;right:32px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#2D6A4F,#52B788);color:#fff;border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(45,106,79,0.3);z-index:9999;transition:all 0.3s ease;align-items:center;justify-content:center;">↑</button>
+  <script>
+  (function(){
+    var btn=document.getElementById('scroll-to-top');
+    if(!btn)return;
+    window.addEventListener('scroll',function(){
+      btn.style.display=window.scrollY>300?'flex':'none';
+    });
+    btn.addEventListener('click',function(){
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  })();
+  </script>
 </body>
 </html>

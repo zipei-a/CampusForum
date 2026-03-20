@@ -10,7 +10,6 @@ async function loadComments(postId) {
 
   try {
     const data = await getComments(postId);
-    console.log('Comments API response:', data);
     const comments = (data && data.comments) || [];
     if (comments.length === 0) {
       listEl.innerHTML = '<div class="empty-hint" style="color:#999;text-align:center;padding:16px 0;">暂无评论，快来抢沙发吧~</div>';
@@ -52,7 +51,6 @@ async function loadComments(postId) {
       </div>
     `}).join('');
   } catch (e) {
-    console.error('loadComments error:', e);
     listEl.innerHTML = '<div class="empty-hint" style="color:#999;text-align:center;padding:16px 0;">评论加载失败，请刷新重试</div>';
   }
 }

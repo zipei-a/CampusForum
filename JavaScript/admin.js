@@ -73,7 +73,6 @@ async function loadStats() {
     document.getElementById('stat-comments').textContent = data.data.commentCount;
     document.getElementById('stat-jobs').textContent = data.data.jobCount;
   } catch (err) {
-    console.error('加载统计失败:', err);
   }
 }
 
@@ -101,7 +100,6 @@ async function loadPosts() {
     const data = await adminRequest(`/admin/posts?${params}`);
     renderPosts(data.data.posts, data.data.pagination);
   } catch (err) {
-    console.error('加载帖子失败:', err);
   }
 }
 
@@ -158,7 +156,6 @@ async function loadComments() {
     const data = await adminRequest(`/admin/comments?${params}`);
     renderComments(data.data.comments, data.data.pagination);
   } catch (err) {
-    console.error('加载评论失败:', err);
   }
 }
 
@@ -213,7 +210,6 @@ async function loadJobs() {
     const data = await adminRequest(`/admin/jobs?${params}`);
     renderJobs(data.data.jobs, data.data.pagination);
   } catch (err) {
-    console.error('加载兼职失败:', err);
   }
 }
 

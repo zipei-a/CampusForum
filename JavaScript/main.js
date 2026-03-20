@@ -10,32 +10,23 @@ const PAGE_SIZE = 10;
 
 // 渲染帖子列表（支持分类过滤和标签过滤）
 async function renderPosts(categoryId = 1, tagName = null, page = 1) {
-  console.log('开始渲染帖子列表:', { categoryId, tagName, page });
   showLoading();
   try {
     const cacheKey = `posts_${categoryId}_${tagName || 'all'}`;
-    console.log('缓存键:', cacheKey);
     let posts = cache.get(cacheKey);
-    console.log('从缓存获取帖子:', posts ? `找到 ${posts.length} 个帖子` : '缓存未命中');
     
     if (!posts) {
-      console.log('从API获取帖子...');
       if (tagName) {
-        console.log('按标签获取:', tagName);
         posts = await getPostsByTag(tagName);
       } else {
-        console.log('获取所有帖子');
         posts = await getPosts();
       }
-      console.log('API返回帖子数量:', posts ? posts.length : 0);
       if (posts) {
         cache.set(cacheKey, posts, 30000);
-        console.log('帖子已缓存');
       }
     }
     
     if (!posts) {
-      console.error('帖子数据为空');
       const container = document.getElementById('post-list');
       container.innerHTML = `
         <div class="empty-state">
@@ -51,14 +42,11 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
     const container = document.getElementById('post-list');
     const paginationContainer = document.getElementById('pagination-container');
     const currentUser = getCurrentUser();
-    console.log('当前用户:', currentUser ? currentUser.username : '未登录');
     
     // 过滤帖子
     let filteredPosts = posts;
     if (categoryId !== 1 && !tagName) {
-      console.log('按分类过滤:', categoryId);
       filteredPosts = posts.filter(post => post.categoryId == categoryId);
-      console.log('过滤后帖子数量:', filteredPosts.length);
     }
     
     // 分页处理
@@ -67,7 +55,6 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
     const startIndex = (page - 1) * PAGE_SIZE;
     const endIndex = startIndex + PAGE_SIZE;
     const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
-    console.log('分页处理:', { total, totalPages, startIndex, endIndex, paginatedCount: paginatedPosts.length });
     
     container.innerHTML = paginatedPosts.length > 0 ? paginatedPosts.map(post => {
       const isAuthor = currentUser && post.author === currentUser.username;
@@ -125,7 +112,6 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
     
     // 渲染分页
     if (paginationContainer && totalPages > 1) {
-      console.log('渲染分页:', { totalPages, currentPage: page });
       pagination = new Pagination({
         container: paginationContainer,
         total: total,
@@ -138,15 +124,12 @@ async function renderPosts(categoryId = 1, tagName = null, page = 1) {
       });
       pagination.render();
     } else if (paginationContainer) {
-      console.log('清除分页');
       paginationContainer.innerHTML = '';
     }
   } catch (e) {
-    console.error('渲染帖子失败:', e);
     const container = document.getElementById('post-list');
     container.innerHTML = `<p>加载失败: ${e.message || '请检查网络或后端服务。'}</p>`;
   } finally {
-    console.log('渲染完成');
     hideLoading();
   }
 }
@@ -232,13 +215,9 @@ function filterByTag(tagName) {
 
 // 绑定分类点击事件
 function bindCategoryEvents() {
-  console.log('Binding category events...');
   const categories = document.querySelectorAll('.sidebar > ul:nth-child(2) li');
-  console.log('Found categories:', categories.length);
   categories.forEach((category, index) => {
-    console.log('Category', index, ':', category.textContent.trim());
     category.addEventListener('click', function() {
-      console.log('Category clicked:', this.textContent.trim());
       // 移除所有分类的active类
       categories.forEach(c => c.classList.remove('active'));
       // 添加当前分类的active类
@@ -249,7 +228,6 @@ function bindCategoryEvents() {
       
       // 获取分类ID
       const categoryName = this.textContent.trim();
-      console.log('Category name:', categoryName);
       // 根据分类名称获取分类ID
       let categoryId = 1; // 默认全部
       if (categoryName.includes('学习交流')) categoryId = 2;
@@ -257,14 +235,12 @@ function bindCategoryEvents() {
       else if (categoryName.includes('活动通知')) categoryId = 4;
       else if (categoryName.includes('问题求助')) categoryId = 5;
       else if (categoryName.includes('兴趣爱好')) categoryId = 6;
-      console.log('Category ID:', categoryId);
       
       // 更新URL
       const url = new URL(window.location.href);
       url.searchParams.set('category', categoryId);
       url.searchParams.delete('tag'); // 清除标签参数
       history.pushState({ categoryId, tagName: null }, '', url.toString());
-      console.log('URL updated:', url.toString());
       
       // 添加入场动画
       const postList = document.getElementById('post-list');
@@ -275,9 +251,7 @@ function bindCategoryEvents() {
       }
       
       // 渲染对应分类的帖子
-      console.log('Rendering posts for category:', categoryId);
       renderPosts(categoryId, null, 1).then(() => {
-        console.log('Posts rendered successfully');
         // 动画效果
         setTimeout(() => {
           if (postList) {
@@ -286,7 +260,6 @@ function bindCategoryEvents() {
           }
         }, 50);
       }).catch(error => {
-        console.error('Error rendering posts:', error);
       });
     });
   });
@@ -294,14 +267,11 @@ function bindCategoryEvents() {
 
 // 加载热门标签
 async function loadHotTags() {
-  console.log('开始加载热门标签...');
   try {
     const hotTags = await getHotTags();
-    console.log('获取热门标签:', hotTags);
     const tagsContainer = document.querySelector('.sidebar > ul:nth-child(4)');
     
     if (!tagsContainer) {
-      console.error('标签容器未找到');
       return;
     }
     
@@ -315,11 +285,9 @@ async function loadHotTags() {
       tagsContainer.appendChild(li);
     });
     
-    console.log('热门标签加载完成');
     // 重新绑定标签点击事件
     bindTagEvents();
   } catch (e) {
-    console.error('加载热门标签失败:', e);
   }
 }
 
@@ -337,14 +305,12 @@ function bindTagEvents() {
       this.classList.add('active');
       
       const tagName = this.textContent.trim();
-      console.log('Tag clicked:', tagName);
       
       // 更新URL
       const url = new URL(window.location.href);
       url.searchParams.set('tag', tagName);
       url.searchParams.set('category', 1); // 标签筛选时分类设为全部
       history.pushState({ categoryId: 1, tagName }, '', url.toString());
-      console.log('URL updated:', url.toString());
       
       // 添加入场动画
       const postList = document.getElementById('post-list');
@@ -355,9 +321,7 @@ function bindTagEvents() {
       }
       
       // 渲染对应标签的帖子
-      console.log('Rendering posts for tag:', tagName);
       renderPosts(1, tagName, 1).then(() => {
-        console.log('Posts rendered successfully');
         // 动画效果
         setTimeout(() => {
           if (postList) {
@@ -366,7 +330,6 @@ function bindTagEvents() {
           }
         }, 50);
       }).catch(error => {
-        console.error('Error rendering posts:', error);
       });
       
       showToast(`正在查看标签"${tagName}"下的帖子`, 'info');
@@ -466,7 +429,6 @@ async function renderForumPostList() {
       `;
     }).join('');
   } catch (e) {
-    console.error('渲染论坛帖子列表失败:', e);
   }
 }
 
@@ -543,7 +505,6 @@ async function renderForumStats() {
       statUsers.textContent = uniqueAuthors.size;
     }
   } catch (e) {
-    console.error('渲染论坛统计失败:', e);
   }
 }
 
@@ -679,28 +640,21 @@ function bindSearchEvents() {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('DOMContentLoaded事件触发');
   try {
     // 绑定汉堡菜单事件
-    console.log('绑定汉堡菜单事件');
     bindMenuToggle();
     
     // 检查登录状态
-    console.log('检查登录状态');
     checkAuth();
     
     // 加载热门标签
-    console.log('加载热门标签');
     await loadHotTags();
     
     // 绑定分类和标签点击事件
-    console.log('绑定分类点击事件');
     bindCategoryEvents();
-    console.log('绑定标签点击事件');
     bindTagEvents();
     
     // 绑定搜索事件
-    console.log('绑定搜索事件');
     bindSearchEvents();
     
     // 事件委托：帖子内标签点击
@@ -716,28 +670,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     // 绑定popstate事件
-    console.log('绑定popstate事件');
     bindPopstateEvent();
     
     // 处理URL参数
-    console.log('处理URL参数');
     handleUrlParams();
     
     // 更新通知徽章
-    console.log('更新通知徽章');
     updateNotificationBadge();
     
     // 论坛风格新组件初始化
-    console.log('初始化论坛风格组件');
     renderHotCarousel();
     renderForumPostList();
     renderForumStats();
     bindPostTabs();
     renderActiveUsers();
     
-    console.log('DOMContentLoaded事件处理完成');
   } catch (e) {
-    console.error('DOMContentLoaded事件处理失败:', e);
   }
 });
 
@@ -780,22 +728,18 @@ function bindPopstateEvent() {
 
 // 处理URL参数
 function handleUrlParams() {
-  console.log('开始处理URL参数...');
   const url = new URL(window.location.href);
   const categoryId = parseInt(url.searchParams.get('category')) || 1;
   const tagName = url.searchParams.get('tag') || null;
   
-  console.log('URL参数:', { categoryId, tagName });
   
   if (tagName) {
-    console.log('按标签渲染:', tagName);
     // 清除分类选中状态
     const categories = document.querySelectorAll('.sidebar > ul:nth-child(2) li');
     if (categories.length > 0) {
       categories.forEach(c => c.classList.remove('active'));
       categories[0].classList.add('active');
     } else {
-      console.error('分类列表未找到');
     }
     
     // 设置标签选中状态
@@ -811,7 +755,6 @@ function handleUrlParams() {
     // 渲染对应标签的帖子
     renderPosts(1, tagName, 1);
   } else {
-    console.log('按分类渲染:', categoryId);
     // 更新侧边栏分类选中状态
     const sidebarCategories = document.querySelectorAll('.sidebar > ul:nth-child(2) li');
     if (sidebarCategories.length > 0) {
@@ -823,7 +766,6 @@ function handleUrlParams() {
         }
       });
     } else {
-      console.error('分类列表未找到');
     }
     
     // 清除标签选中状态
@@ -833,7 +775,6 @@ function handleUrlParams() {
     // 渲染对应分类的帖子
     renderPosts(categoryId, null, 1);
   }
-  console.log('URL参数处理完成');
 }
 
 // 绑定导航栏分类点击事件
@@ -915,7 +856,6 @@ async function renderActiveUsers() {
       `;
     }).join('');
   } catch (e) {
-    console.error('渲染活跃用户失败:', e);
   }
 }
 
@@ -937,6 +877,5 @@ async function updateNotificationBadge() {
       }
     }
   } catch (e) {
-    console.error('更新通知徽章失败:', e);
   }
 }

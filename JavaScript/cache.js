@@ -19,7 +19,6 @@ class DataCache {
     try {
       localStorage.setItem(cacheKey, JSON.stringify(cacheData));
     } catch (e) {
-      console.warn('localStorage缓存写入失败:', e);
     }
   }
 
@@ -36,7 +35,6 @@ class DataCache {
           this.memoryCache.set(cacheKey, cacheData);
         }
       } catch (e) {
-        console.warn('localStorage缓存读取失败:', e);
       }
     }
     
@@ -56,7 +54,6 @@ class DataCache {
     try {
       localStorage.removeItem(cacheKey);
     } catch (e) {
-      console.warn('localStorage缓存删除失败:', e);
     }
   }
 
@@ -67,7 +64,6 @@ class DataCache {
         .filter(key => key.startsWith(CACHE_PREFIX))
         .forEach(key => localStorage.removeItem(key));
     } catch (e) {
-      console.warn('localStorage缓存清空失败:', e);
     }
   }
 

@@ -55,7 +55,6 @@ async function loadNotifications() {
       });
     });
   } catch (e) {
-    console.error('加载通知失败:', e);
   }
 }
 
@@ -105,7 +104,6 @@ async function loadCommentReplies() {
       });
     });
   } catch (e) {
-    console.error('加载评论回复失败:', e);
   }
 }
 
@@ -173,7 +171,6 @@ async function updateNotificationBadge() {
       }
     }
   } catch (e) {
-    console.error('更新通知徽章失败:', e);
   }
 }
 

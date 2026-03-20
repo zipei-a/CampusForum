@@ -25,14 +25,27 @@ async function request(url, options = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${url}`, { ...options, headers });
+  // 全局10秒超时
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${url}`, { ...options, headers, signal: controller.signal });
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('请求超时，请检查网络后重试');
+    }
+    throw new Error('网络错误，请检查网络连接');
+  }
+  clearTimeout(timeoutId);
   
   let data;
   const text = await response.text();
   try {
     data = JSON.parse(text);
   } catch (error) {
-    console.error("响应解析失败。状态码:", response.status, "响应内容:", text);
     throw new Error(`系统错误: 期待 JSON 却收到了其他内容 (状态码 ${response.status})`);
   }
 

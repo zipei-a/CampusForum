@@ -29,7 +29,6 @@ async function loadJobs() {
       throw new Error(`HTTP ${res.status}`);
     }
     const data = await res.json();
-    console.log('Jobs API response:', data);
     if (data.code !== 200) {
       throw new Error(data.message || '获取兼职列表失败');
     }
@@ -62,7 +61,6 @@ async function loadJobs() {
       </div>
     `).join('');
   } catch (e) {
-    console.error('loadJobs error:', e);
     list.innerHTML = '<div class="empty-hint">加载失败，请稍后刷新</div>';
   }
 }

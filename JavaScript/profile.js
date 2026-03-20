@@ -96,7 +96,6 @@ async function loadStats() {
       document.getElementById('like-count').textContent = profileUser.likeCount || 0;
     }
   } catch (e) {
-    console.error('加载统计数据失败:', e);
   } finally {
     hideLoading();
   }
